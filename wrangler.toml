@@ -1,0 +1,8 @@
+name = "lampada-e-lar"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Depois de criar o KV (veja o README), cole aqui o id que a Cloudflare mostrar:
+[[kv_namespaces]]
+binding = "ASSINATURAS"
+id = "COLE_O_ID_DO_KV_AQUI"
