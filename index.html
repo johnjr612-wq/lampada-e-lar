@@ -1048,7 +1048,7 @@ function renderInicio(){
   </div></section>
   <div class="sub">Para hoje</div>
   <div class="tiles">${pos?tile('read','Continuar lendo',BIB[pos.b][0]+' '+(pos.c+1)):''}${tile('devo','Devocional em família','Dia '+(fd+1)+': '+DEVO[fd].t)}${tile('story','História em quadrinhos',story.t)}${tile('study','Estudo bíblico',study.t)}</div>
-  <button class="premcard" id="prem">${LOCK}<span><b>${isPrem()?'Assinatura ativa':'Seja Premium'}</b><small>${isPrem()?'Todo o conteúdo liberado':'Libere todas as histórias, questionários e estudos'}</small></span></button>`;
+  <button class="premcard" id="prem">${LOCK}<span><b>${isPrem()?'Assinatura ativa':'Seja Premium'}</b><small>${isPrem()?'Todo o conteúdo liberado':'Libere todas as histórias, quizzes e estudos'}</small></span></button>`;
   $('#prem').insertAdjacentHTML('afterend',LGLINKS);
   $('#prem').onclick=()=>openPaywall('home');
   $('#bnr').onclick=()=>{L={v:'read',b:BIB.indexOf(bk),c:r[1]-1,vs:r[2]-1,q:'',t:BIB.indexOf(bk)<39?'AT':'NT'};navTo('biblia')};
@@ -1200,7 +1200,7 @@ function openPaywall(why){
   d.innerHTML=`<div class="pwbox"><button class="pwx" id="pwx" aria-label="Fechar">×</button>
   <h2>${prem?'Sua assinatura está ativa':PLAN.nome}</h2>
   ${prem?'<p>Obrigado por apoiar o Lâmpada e Lar! Todo o conteúdo está liberado.</p><button class="btn ghost" id="pwout" style="width:100%">Sair da assinatura neste aparelho</button>':`
-  <p>Libere todas as histórias em quadrinhos, os questionários das histórias, todos os estudos e os 7 dias de devocional em família.${PLAN.preco?' <b>'+esc(PLAN.preco)+'</b>':''}</p>
+  <p>Libere todas as histórias em quadrinhos, os quizzes das histórias, todos os estudos e os 7 dias de devocional em família.${PLAN.preco?' <b>'+esc(PLAN.preco)+'</b>':''}</p>
   <ul><li>Todas as ${STORIES.length} histórias em quadrinhos</li><li>Quiz de cada história</li><li>Todos os estudos bíblicos</li><li>Devocional completo para a família</li></ul>
   <button class="btn" id="pwbuy" style="width:100%;font-size:1.08rem;padding:14px">Assinar agora</button>
   <p class="pwmsg" id="pwmsg" role="status"></p>
@@ -1268,7 +1268,7 @@ term:{t:'Termos de Uso',h:`
 <p><i>Última atualização: novembro de 2026.</i></p>
 <p>Ao usar o Lâmpada e Lar, você concorda com estes termos. Se não concordar, não utilize o aplicativo.</p>
 <h3>1. O que é o Lâmpada e Lar</h3>
-<p>Um aplicativo de estudo bíblico e devocional em família, com a Bíblia, estudos, devocionais, histórias em quadrinhos ilustradas e questionários para crianças. Parte do conteúdo é gratuita e parte é exclusiva para assinantes (Premium).</p>
+<p>Um aplicativo de estudo bíblico e devocional em família, com a Bíblia, estudos, devocionais, histórias em quadrinhos ilustradas e quizzes para crianças. Parte do conteúdo é gratuita e parte é exclusiva para assinantes (Premium).</p>
 <h3>2. Assinatura Premium</h3>
 <ul><li>A assinatura é <b>mensal</b>, com renovação automática, pelo valor informado na tela de assinatura (hoje, R$ 19,90 por mês).</li>
 <li>A cobrança e o pagamento são feitos pela <b>Hotmart</b>.</li>
