@@ -1184,7 +1184,7 @@ function renderQuiz(){
    link   = endereço de pagamento da Hotmart/Kiwify (página de checkout)
    verify = endereço /verificar do seu servidor (Cloudflare Worker); responde {ok:true,ate:"AAAA-MM-DD"}
    demo   = código de teste; APAGUE (deixe '') antes de vender de verdade */
-const PLAN={nome:'Lâmpada e Lar Premium',preco:'R$ 19,90 por mês',link:'COLE_AQUI_O_LINK_DE_PAGAMENTO_DA_HOTMART',verify:'https://lampada-e-lar.john-jr612.workers.dev/verificar',demo:''};
+const PLAN={nome:'Lâmpada e Lar Premium',preco:'R$ 19,90 por mês',link:'https://pay.hotmart.com/K108383340C',verify:'https://lampada-e-lar.john-jr612.workers.dev/verificar',demo:''};
 const FREE={stories:['h1','h2','h5','h6','h8','h12'],studies:['s1','s2'],days:2};
 const isPrem=()=>{const s=store.get('sub',null);if(!s||!s.ok)return false;if(s.ate&&new Date(s.ate+'T23:59:59')<new Date())return false;return true};
 const lockedStory=id=>!isPrem()&&!FREE.stories.includes(id);
