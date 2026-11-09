@@ -274,6 +274,12 @@ button.chip:hover,button.chip:active{background:var(--soft);border-color:var(--m
 .pwbox .legal h3{font-family:var(--display);font-size:1.02rem;margin:16px 0 4px}.pwbox .legal p,.pwbox .legal li{font-size:.93rem;line-height:1.55}.pwbox .legal ul{margin:4px 0 8px}.lglinks{margin:14px 0 4px;text-align:center;font-size:.85rem;color:var(--muted)}.lglinks button{background:none;border:0;color:inherit;text-decoration:underline;font:inherit;padding:4px 6px;cursor:pointer}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* narração ligada (NARRACAO=true) */
+body.narr-on .comic{height:auto!important;min-height:100%;display:flex!important;flex-direction:column;gap:14px;padding:10px!important}
+body.narr-on .cell{display:flex;flex-direction:column;gap:7px}
+body.narr-on .cell .pnl{aspect-ratio:400/260;width:100%;min-height:0}
+body.narr-on .narr{margin:0;font:500 1.02rem/1.55 var(--body);color:inherit;padding:0 4px}
+@media (orientation:landscape) and (min-width:700px){body.narr-on .comic{display:grid!important;grid-template-columns:1fr 1fr;align-items:start;gap:16px}}
 </style>
 </head>
 <body>
@@ -452,9 +458,10 @@ const I={
  orb:(x,y,r,c,g=.28)=>`<circle cx="${x}" cy="${y}" r="${r*2.2}" fill="${c}" opacity="${g}"/><circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`,
  glow:(x,y,r,c)=>`<radialGradient id="gl${x}${y}"><stop offset="0" stop-color="${c}" stop-opacity=".8"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient><circle cx="${x}" cy="${y}" r="${r}" fill="url(#gl${x}${y})"/>`
 };
-function scene(sky,parts,alt){
+function scene(sky,parts,alt,vb,fl){
   const id='sg'+(++uid);
-  return `<svg class="toon" viewBox="0 0 400 260" role="img" aria-label="${esc(alt)}" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky[0]}"/><stop offset="1" stop-color="${sky[1]}"/></linearGradient></defs><g><rect x="-10" y="-10" width="420" height="280" fill="url(#${id})"/>${parts.join('')}</g></svg>`;
+  const body=`<rect x="-10" y="-10" width="420" height="280" fill="url(#${id})"/>${parts.join('')}`;
+  return `<svg class="toon" viewBox="${vb||'0 0 400 260'}" role="img" aria-label="${esc(alt)}" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky[0]}"/><stop offset="1" stop-color="${sky[1]}"/></linearGradient></defs><g>${fl?`<g transform="translate(400 0) scale(-1 1)">${body}</g>`:body}</g></svg>`;
 }
 
 /* ---------- HISTÓRIAS ---------- */
@@ -712,6 +719,417 @@ STORIES.push(
 );
 const ORDER={h1:101,h2:106,h3:137,h4:214,h5:917,h6:2706,h7:3201,h8:4202,h9:4219,h10:4210,h11:4104,h12:4224};
 const CHAP={h1:['Gênesis',1],h2:['Gênesis',7],h3:['Gênesis',37],h4:['Êxodo',14],h5:['1 Samuel',17],h6:['Daniel',6],h7:['Jonas',1],h8:['Lucas',2],h9:['Lucas',19],h10:['Lucas',10],h11:['Marcos',4],h12:['Lucas',24]};
+/*__EXP_START__*/window.EXP={h1:[
+[0,"No começo de tudo, não havia nada que a gente possa ver: só escuridão e silêncio. Mas Deus já estava ali. Então ele falou, e a primeira coisa que mandou aparecer foi a luz. A escuridão se afastou, e Deus viu que a luz era boa."],
+[0,"Deus separou a luz da escuridão e deu nome a cada uma: o dia e a noite. Foi assim que nasceu o primeiro dia, e depois o primeiro anoitecer. O mundo ainda estava vazio, mas Deus estava só começando o seu trabalho.","Dia e noite, tudo por obra de Deus.",{z:"TR",fl:1}],
+[1,"Depois, Deus separou as águas lá de cima, onde ficam as nuvens, das águas aqui de baixo. Em seguida, ordenou que a terra seca aparecesse no meio do mar. Havia mar, havia chão firme, e tudo estava pronto para receber a vida."],
+[1,"A terra ficou verde! Deus fez brotar capim, flores, árvores e frutas de todo tipo, cada uma com suas sementes para que nascessem outras. Deus olhou para as plantas e viu que tudo aquilo era bom.","Plantas, flores e árvores por toda parte.",{z:"R",fl:1}],
+[2,"Deus colocou o sol para clarear o dia, a lua e as estrelas para brilharem na noite. Depois encheu o mar de peixes e o céu de aves. Cada criatura recebeu de Deus a bênção para crescer e se espalhar."],
+[2,"Em seguida vieram os animais da terra: os que rastejam, os que pastam e os de grande força, como o leão. Deus olhou para todos eles e viu que era bom. A casa estava cheia de vida, só faltava mais uma criação.","Cada animal com o seu jeitinho.",{z:"C"}],
+[3,"Por fim, Deus fez o ser humano, homem e mulher, parecidos com ele, para cuidar do jardim e de tudo o que ele criou. Deus abençoou os dois e disse que ficassem felizes com tudo o que havia. Foi o dia mais especial da criação."],
+[3,"No sétimo dia, Deus descansou. Ele olhou para tudo o que tinha feito e viu que era muito bom. Por isso, até hoje, o descanso é um presente de Deus para nós. Cada vez que olhamos para o céu, podemos dizer: obrigado, Senhor!","Deus descansou e abençoou o dia.",{z:"W",fl:1,sk:"u",b:[["Obrigado, Senhor!",8,12]]}]
+],
+h2:[
+[0,"Noé vivia num tempo em que a maldade crescia na terra. Mas ele era um homem justo, que andava com Deus. Um dia, Deus lhe contou o que ia acontecer e pediu que construísse uma grande arca de madeira. Noé não discutiu: começou o trabalho."],
+[0,"A arca era enorme, com três andares e uma porta ao lado. Noé e sua família trabalharam durante muito tempo, e talvez algumas pessoas rissem deles. Mas Noé continuou, porque confiava em Deus mais do que na opinião dos outros.","Noé obedeceu, mesmo sem ver chuva.",{z:"R",fl:1}],
+[1,"Quando a arca ficou pronta, Deus mandou os animais virem até Noé. Eles chegaram de dois em dois, macho e fêmea, e entraram um a um. Noé levou também comida para todos, como Deus tinha mandado. A família de Noé entrou com eles."],
+[1,"Quando todos estavam lá dentro, foi o próprio Deus quem fechou a porta da arca. Os animais estavam seguros, e a família de Noé também. Faltava apenas esperar que a chuva começasse, como Deus havia dito.","Deus mesmo fechou a porta.",{z:"L"}],
+[2,"A chuva caiu durante quarenta dias e quarenta noites. As águas subiram, cobriram os campos, as colinas e até os montes mais altos. Mas a arca flutuava firme sobre a água, levando todos os que Deus tinha protegido."],
+[2,"Dentro da arca, Noé e a família cuidavam dos animais todos os dias. Eles esperaram muito tempo, e Deus não os esqueceu. Então Deus fez soprar um vento sobre a terra, e as águas começaram a baixar aos poucos.","Deus se lembrou de Noé.",{z:"C",sk:"d"}],
+[3,"Depois de muitos meses, a arca pousou sobre um monte. Noé soltou uma pomba, que voltou com um raminho de oliveira no bico. Era sinal de que a terra estava secando. Por fim, Deus mandou que todos saíssem."],
+[3,"Ao sair, Noé primeiro agradeceu a Deus. Então Deus fez uma promessa: nunca mais haveria um dilúvio para destruir a terra. E colocou o arco-íris nas nuvens como lembrança dessa promessa. Sempre que você vir um arco-íris, lembre: Deus cumpre o que promete.","Cada arco-íris lembra uma promessa.",{z:"TL",fl:1}]
+],
+h3:[
+[0,"Jacó tinha doze filhos, e amava especialmente José, que era um dos mais novos. Um dia, deu a ele uma túnica colorida, bonita e diferente das roupas dos irmãos. José ficou muito contente com o presente do pai."],
+[0,"José também tinha sonhos que mostravam que seria alguém importante, e ele contou a seus irmãos. Em vez de ficarem felizes, eles ficaram ainda mais irritados. Pouco a pouco, o ciúme foi crescendo no coração deles.","Os sonhos de José deixaram os irmãos com raiva.",{z:"L",fl:1}],
+[1,"Os irmãos não aguentavam mais. Quando José foi visitá-los no campo, eles o agarraram e o venderam a uns mercadores que iam para o Egito. Depois disseram ao pai que o filho tinha desaparecido. Jacó chorou por muito tempo."],
+[1,"José foi levado para uma terra distante, sem ninguém da família. Deve ter sentido medo e saudade. Mas o texto da Bíblia repete que Deus estava com José, mesmo nos dias mais difíceis.","Longe de casa, mas não longe de Deus.",{z:"R"}],
+[2,"No Egito, José trabalhou com honestidade e foi injustamente colocado na prisão. Lá, Deus lhe deu sabedoria para explicar sonhos. Quando o rei do Egito teve um sonho que ninguém entendia, José foi chamado, e Deus lhe mostrou o significado."],
+[2,"O sonho avisava que viriam sete anos de fartura e depois sete de fome. O rei colocou José no comando para guardar comida durante os anos bons. Assim, quando a fome chegou, o Egito tinha o que comer.","José guardou comida para os anos difíceis.",{z:"W",fl:1,b:[["Vamos guardar!",50,10]]}],
+[3,"A fome chegou também à terra de Jacó, e os irmãos de José foram ao Egito buscar comida. Sem reconhecê-lo, eles se curvaram diante dele. José os reconheceu logo. Ele podia se vingar, mas escolheu outro caminho."],
+[3,"José chorou e disse aos irmãos: quem era ele. Eles ficaram com medo, mas José os abraçou. Disse que o mal que tinham feito, Deus transformou em bem para salvar muita gente. A família foi reunida, e Jacó pôde abraçar o filho de novo.","O perdão devolveu a família a José.",{z:"C",b:[["Deus transformou o mal em bem.",20,8]]}]
+],
+h4:[
+[0,"O povo de Israel era escravo no Egito, e Deus o libertou por meio de Moisés. Depois de sair, eles caminharam até chegar diante do mar Vermelho. Mas, olhando para trás, viram o exército do faraó vindo atrás deles. O medo tomou conta de todos."],
+[0,"De um lado, o mar. Do outro, os soldados com seus carros. Não havia saída que eles pudessem ver. As pessoas ficaram assustadas e começaram a reclamar com Moisés. Eles ainda não sabiam o que Deus ia fazer.","Sem saída? Para Deus, sempre há um caminho.",{z:"R",fl:1}],
+[1,"Moisés respondeu ao povo: não tenham medo, fiquem firmes e vejam o livramento que o Senhor vai dar hoje. Deus disse a Moisés que levantasse o cajado e estendesse a mão sobre o mar. Moisés obedeceu."],
+[1,"Uma coluna de nuvem se colocou entre o povo e o exército do faraó, de modo que os soldados não conseguiram se aproximar durante a noite. Deus estava protegendo o seu povo, mesmo antes de o mar se abrir.","Deus ficou entre o povo e o perigo.",{z:"C",sk:"n"}],
+[2,"Durante toda a noite, Deus mandou um forte vento que foi afastando as águas. Quando amanheceu, havia um caminho de terra seca no meio do mar, com água como muralha dos dois lados. O povo começou a atravessar."],
+[2,"Homens, mulheres, crianças e animais passavam sem molhar os pés. Quem tinha medo olhava para cima e via a água parada, como uma parede. Deus abria o caminho no lugar mais impossível.","Pela terra seca, no meio do mar.",{z:"W",fl:1,b:[["Deus está conosco!",8,10]]}],
+[3,"Quando o último israelita chegou à outra margem, o exército do faraó tentou seguir pelo mesmo caminho. Então Deus fez as águas voltarem ao lugar. O povo viu, então, que o Senhor os tinha salvo."],
+[3,"Na outra margem, todos cantaram. Miriã, irmã de Moisés, tomou o pandeiro, e as mulheres dançaram com ela. Cantaram ao Senhor, porque ele tinha feito algo grandioso. Quando Deus nos ajuda, a melhor resposta é agradecer.","Cantando e dançando para Deus.",{z:"C",b:[["Cantem ao Senhor!",8,8]]}]
+],
+h5:[
+[0,"Davi era o filho mais novo de Jessé e cuidava das ovelhas da família. Era um trabalho solitário, mas ele não se sentia só, porque cantava e conversava com Deus. Quando um leão ou um urso vinha pegar uma ovelha, Davi a defendia, e sabia que Deus o ajudava."],
+[0,"Enquanto Davi cuidava do rebanho, o exército de Israel estava no vale, diante dos filisteus. Seus três irmãos mais velhos estavam entre os soldados. Um dia, Jessé mandou Davi levar pão e queijo para eles e trazer notícias.","Davi saiu para visitar os irmãos.",{z:"R",fl:1}],
+[1,"No vale, todos os dias, saía um gigante chamado Golias, com mais de dois metros e meio de altura. Ele gritava e desafiava Israel a mandar alguém lutar com ele. Durante quarenta dias, o exército inteiro ficou com medo."],
+[1,"Davi ouviu o desafio e ficou indignado: como alguém podia insultar o exército do Deus vivo? Ele se ofereceu para enfrentar o gigante. O rei Saul achou que era só um menino, mas Davi contou como Deus o tinha livrado do leão e do urso.","Davi lembrou do que Deus já tinha feito.",{z:"L",b:[["Deus me livrou antes!",50,8]]}],
+[2,"Saul quis dar a Davi a sua armadura, mas ela era grande demais, e Davi não conseguia andar com ela. Ele a tirou, pegou o seu cajado, escolheu cinco pedras lisas no riacho e levou a funda na mão."],
+[2,"Golias riu ao ver um menino vindo até ele. Davi respondeu que o gigante vinha com espada e lança, mas ele vinha em nome do Senhor. Então correu para o gigante, lançou a pedra, e Golias caiu.","A funda, uma pedra e muita fé.",{z:"C",b:[["Em nome do Senhor!",6,10]]}],
+[3,"Quando viram que o gigante tinha caído, os filisteus fugiram. O exército de Israel gritou de alegria e foi atrás deles. O medo que durava quarenta dias terminou num instante."],
+[3,"Todos aprenderam naquele dia que a vitória não vem da força das armas, mas de Deus. Davi não era o mais forte, mas confiava no Senhor. Quando algo parecer grande demais para você, lembre-se de que Deus é maior.","Deus é maior que qualquer gigante.",{z:"W",fl:1}]
+],
+h6:[
+[0,"Daniel era um homem de Deus que servia ao rei da Babilônia. Ele era tão honesto e trabalhador que o rei Dario pensou em colocá-lo como chefe de todo o reino. Isso despertou a inveja de outros governantes."],
+[0,"Os invejosos procuraram algum erro na vida de Daniel, mas não encontraram nenhum. Então perceberam que a única coisa que podiam usar contra ele era a sua fé. Daniel orava a Deus três vezes por dia, com a janela aberta.","Daniel não deixou de orar.",{z:"L",fl:1}],
+[1,"Esses homens convenceram o rei a assinar uma lei: durante trinta dias, ninguém poderia orar a nenhum deus ou homem, só ao rei. Quem desobedecesse seria jogado na cova dos leões. Dario assinou sem perceber a armadilha."],
+[1,"Daniel soube da lei, mas voltou para casa e orou como sempre, de joelhos, agradecendo a Deus. Os inimigos o viram e correram contar ao rei. Dario ficou muito triste, porque gostava de Daniel, mas a lei não podia ser mudada.","O rei queria salvar Daniel, mas não pôde.",{z:"C",b:[["Que o seu Deus o livre!",50,8]]}],
+[2,"Daniel foi jogado na cova dos leões, e uma pedra foi colocada na entrada. O rei voltou ao palácio, não comeu nada e passou a noite sem dormir, preocupado com seu amigo."],
+[2,"Lá dentro, Daniel não estava sozinho. Deus enviou o seu anjo e fechou a boca dos leões. Eles ficaram quietos perto de Daniel, que passou a noite em segurança.","Os leões não fizeram mal a Daniel.",{z:"R",fl:1}],
+[3,"Ao amanhecer, o rei foi correndo até a cova e chamou Daniel com voz triste. Daniel respondeu: estou vivo, ó rei! Deus enviou o anjo e fechou a boca dos leões."],
+[3,"O rei ficou muito feliz e mandou tirar Daniel da cova. Ele não tinha nenhum ferimento, porque tinha confiado em Deus. Então Dario escreveu a todo o reino que o Deus de Daniel era o Deus vivo, e que seu reino jamais terminaria.","Daniel confiou, e Deus o guardou.",{z:"W",b:[["O Deus de Daniel é vivo!",50,8]]}]
+],
+h7:[
+[0,"Deus chamou Jonas, um profeta de Israel, e lhe deu uma missão: ir até Nínive, uma cidade grande e muito violenta, e avisar que Deus tinha visto a maldade deles. Jonas não gostou nada daquilo."],
+[0,"Os moradores de Nínive eram inimigos do povo de Jonas, e ele não queria que fossem perdoados. Em vez de obedecer, Jonas foi para o lado contrário, até o porto, para fugir de Deus e do que ele pedia.","Jonas fugiu na direção oposta.",{z:"L",fl:1,b:[["Para Társis, não Nínive!",50,8]]}],
+[1,"Jonas comprou uma passagem num barco que ia para longe. Quando o barco estava no meio do mar, Deus mandou um vento forte, e logo veio uma tempestade tão grande que o barco ameaçava se partir."],
+[1,"Os marinheiros tinham medo e oravam, cada um ao seu deus, enquanto Jonas dormia lá embaixo. O capitão o acordou para que ele também orasse. Quando Jonas contou que fugia de Deus, entendeu que a tempestade tinha a ver com isso e pediu que o jogassem ao mar.","Jonas assumiu o erro.",{z:"C",sk:"s"}],
+[2,"Os marinheiros jogaram Jonas na água, e o mar se acalmou na hora. Mas Deus não o abandonou: preparou um grande peixe, que engoliu Jonas. Ele ficou lá dentro três dias e três noites."],
+[2,"Dentro do peixe, no escuro, Jonas orou. Reconheceu que tinha errado e agradeceu a Deus por ter ouvido o seu clamor. Então Deus mandou o peixe lançar Jonas na praia, em terra seca.","No lugar mais difícil, Jonas orou.",{z:"W",fl:1,b:[["Perdoa-me, Senhor!",50,8]]}],
+[3,"Deus falou de novo com Jonas: vá a Nínive. Dessa vez, Jonas obedeceu. Andou pela cidade grande avisando que, se o povo não mudasse, Deus os julgaria em quarenta dias."],
+[3,"O povo de Nínive acreditou. Desde o rei até as crianças, todos se arrependeram e pediram perdão a Deus, e Deus os perdoou. Jonas aprendeu que o amor de Deus é maior do que nós pensamos, e que ele dá novas chances.","Deus também ama quem erra e se arrepende.",{z:"C"}]
+],
+h8:[
+[0,"Naquele tempo, o imperador mandou que todos fossem se registrar na cidade de sua família. José, que era da família de Davi, teve que levar Maria até Belém. Ela estava esperando o bebê que o anjo tinha prometido."],
+[0,"A viagem era longa e cansativa. Eles andaram por estradas e morros durante vários dias. Maria e José não tinham muito dinheiro, mas confiavam que Deus cuidaria de tudo, como sempre tinha feito.","Maria e José confiaram em Deus pelo caminho.",{z:"R",fl:1,sk:"n"}],
+[1,"Quando chegaram a Belém, não encontraram lugar nas hospedarias, porque estava tudo cheio. Então abrigaram-se num lugar onde ficavam os animais. Ali, naquela noite, Maria deu à luz o seu filho."],
+[1,"Maria o envolveu em panos e o colocou numa manjedoura, que é o cocho onde os animais comem. O Filho de Deus, rei de todos os reis, veio ao mundo de forma humilde, como um bebê, sem luxo nenhum.","Jesus nasceu de forma humilde.",{z:"C"}],
+[2,"Perto dali, pastores cuidavam das ovelhas durante a noite. De repente, um anjo apareceu, e a glória do Senhor brilhou em volta deles. Eles ficaram com muito medo."],
+[2,"O anjo disse: não tenham medo! Trago uma boa notícia de grande alegria para todo o povo. Hoje nasceu o Salvador, que é Cristo, o Senhor. Vocês o encontrarão deitado numa manjedoura. Então muitos anjos apareceram louvando a Deus.","A boa notícia chegou primeiro aos pastores.",{z:"W",fl:1,b:[["Glória a Deus nas alturas!",6,8]]}],
+[3,"Os pastores foram depressa a Belém e encontraram Maria, José e o bebê, exatamente como o anjo tinha dito. Depois voltaram contando a todos o que tinham visto, cheios de alegria e louvando a Deus."],
+[3,"Algum tempo depois, magos que viviam no oriente viram uma estrela diferente no céu e foram segui-la. Quando encontraram Jesus, ajoelharam-se e o adoraram, oferecendo presentes: ouro, incenso e mirra. Gente de perto e de longe veio adorar o menino.","Os magos adoraram o Rei recém-nascido.",{z:"C",sk:"n"}]
+],
+h9:[
+[0,"Zaqueu era chefe dos cobradores de impostos em Jericó. Ele tinha ficado rico cobrando mais do que devia das pessoas, e por isso o povo não gostava dele. Mesmo assim, ouvira falar de Jesus e queria muito vê-lo."],
+[0,"Um dia, Jesus passou por Jericó, e uma multidão se juntou na rua. Zaqueu era baixinho, e, por mais que tentasse, as pessoas na frente não o deixavam ver nada. Ninguém abria espaço para ele.","Zaqueu tentou, mas não conseguiu ver.",{z:"L",fl:1}],
+[1,"Então Zaqueu teve uma ideia: correu na frente da multidão e subiu em uma figueira, bem no caminho por onde Jesus ia passar. Um homem importante subindo em árvore! Mas ele não ligou para o que os outros pensariam."],
+[1,"De cima da árvore, Zaqueu via toda a rua. Os galhos o escondiam um pouco, e ele esperava só dar uma olhada em Jesus, de longe. Nem imaginava o que ia acontecer a seguir.","O que Zaqueu queria era só ver Jesus.",{z:"C"}],
+[2,"Quando Jesus chegou perto da árvore, parou, olhou para cima e chamou Zaqueu pelo nome. Disse para descer depressa, porque queria ficar na casa dele naquele dia. Ninguém esperava aquilo."],
+[2,"Zaqueu desceu depressa e recebeu Jesus com alegria. Mas as pessoas reclamaram: como Jesus podia ir à casa de um pecador? Jesus sabia o que fazia: ele veio para buscar e salvar quem estava perdido.","Jesus escolheu a casa de Zaqueu.",{z:"R",fl:1,b:[["Hoje vou à sua casa!",50,8]]}],
+[3,"Durante a visita, o coração de Zaqueu mudou. Ele se levantou e disse: Senhor, vou dar metade do que tenho aos pobres. E, se enganei alguém, devolvo quatro vezes mais."],
+[3,"Jesus disse que, naquele dia, a salvação tinha chegado àquela casa. A amizade de Jesus transformou Zaqueu: de alguém que tirava dos outros para alguém que dava e consertava os erros. Quando Jesus entra na vida de alguém, tudo muda.","Quem encontra Jesus muda por dentro.",{z:"W",fl:1}]
+],
+h10:[
+[0,"Um dia, um especialista na lei perguntou a Jesus quem era o seu próximo, a pessoa que devia amar. Em vez de explicar, Jesus contou uma história: um homem descia de Jerusalém para Jericó por uma estrada deserta e perigosa."],
+[0,"Naquela estrada havia ladrões escondidos. Eles atacaram o viajante, tiraram tudo o que ele tinha, bateram nele e o deixaram caído, quase morto, à beira do caminho. Não havia ninguém por perto para ajudar.","O viajante ficou sozinho e machucado.",{z:"L",fl:1,sk:"g"}],
+[1,"Pouco depois, passou por ali um sacerdote, que trabalhava no templo. Ele viu o homem machucado, mas passou pelo outro lado da estrada, sem parar. Depois, passou também um levita, outro servo do templo, e fez a mesma coisa."],
+[1,"Os dois sabiam muito sobre Deus e a lei. Mas, quando viram alguém precisando de ajuda, preferiram se afastar. Talvez estivessem com pressa, ou com medo, ou achando que não era problema deles.","Eles viram, mas não ajudaram.",{z:"R",b:[["Não é comigo.",8,8]]}],
+[2,"Então passou um samaritano. Os samaritanos e os judeus não se davam bem, e o ferido provavelmente era judeu. Mas o samaritano sentiu compaixão. Aproximou-se, limpou os machucados com óleo e vinho e os enfaixou."],
+[2,"Depois colocou o homem em seu próprio animal e o levou até uma hospedaria, onde cuidou dele durante a noite. No dia seguinte, deu dinheiro ao dono e pediu que cuidasse do ferido. Disse que, se gastasse mais, pagaria na volta.","O samaritano cuidou até o fim.",{z:"C",b:[["Posso ajudar!",50,8]]}],
+[3,"Terminada a história, Jesus perguntou ao especialista: qual desses três foi o próximo do homem que caiu nas mãos dos ladrões? Ele respondeu: aquele que teve misericórdia dele."],
+[3,"Então Jesus disse: vá e faça o mesmo. Nosso próximo é qualquer pessoa que precisa de ajuda, mesmo que seja diferente de nós. Amar é parar, ver a necessidade do outro e fazer o que está ao nosso alcance.","Vá e faça o mesmo.",{z:"W",fl:1,sk:"u"}]
+],
+h11:[
+[0,"Depois de um longo dia ensinando multidões, Jesus disse aos discípulos: vamos para o outro lado do lago. Eles entraram no barco, e outros barcos foram junto. Jesus estava tão cansado que se deitou na parte de trás do barco."],
+[0,"O sol se punha, e o lago estava calmo. Os discípulos, muitos deles pescadores, conheciam bem aquelas águas. Navegavam tranquilos, e Jesus dormia sobre uma almofada, na popa do barco.","Jesus dormia, cansado do dia.",{z:"R",fl:1}],
+[1,"De repente, veio uma tempestade forte. O vento soprava, as ondas batiam no barco, e a água começou a entrar. Os discípulos, que eram pescadores experientes, ficaram com medo de que o barco afundasse."],
+[1,"Jesus continuava dormindo. Eles o acordaram e perguntaram: Mestre, não te importas que morramos? Eles estavam assustados e achavam que Jesus não estava vendo o perigo. Mas ele estava com eles o tempo todo.","Eles clamaram a Jesus.",{z:"C",sk:"s",b:[["Mestre, ajuda!",8,8]]}],
+[2,"Jesus se levantou, repreendeu o vento e disse ao mar: acalma-te, fica quieto! Não foi preciso nenhum esforço: com uma ordem, a tempestade obedeceu."],
+[2,"O vento parou, e fez-se uma grande calmaria. Jesus então olhou para os discípulos e perguntou por que tinham tanto medo e onde estava a sua fé. Ele queria que eles aprendessem a confiar nele, mesmo no meio das tempestades.","O vento e o mar obedecem a Jesus.",{z:"L",fl:1}],
+[3,"Os discípulos ficaram admirados. Até então, tinham visto Jesus ensinar e curar. Agora viam que ele mandava no vento e no mar. Eles se olhavam e diziam uns aos outros: quem é este, que até o vento e o mar lhe obedecem?"],
+[3,"Quando vierem as tempestades da vida, como o medo, a tristeza ou a doença, podemos lembrar que Jesus está no barco conosco. Ele ouve a nossa oração e pode acalmar o nosso coração, mesmo quando as ondas parecem grandes.","Jesus está conosco na tempestade.",{z:"W",b:[["Quem é este?",8,10]]}]
+],
+h12:[
+[0,"Na sexta-feira, Jesus foi crucificado e colocado num túmulo escavado na rocha. Os discípulos estavam tristes e com medo. No sábado, todos descansaram. Mas bem cedo no domingo, algumas mulheres que amavam Jesus saíram de casa."],
+[0,"Elas levavam perfumes para cuidar do corpo de Jesus, como se fazia naquela época. Caminharam no começo da manhã, quando o sol ainda estava nascendo. No caminho, uma pergunta as preocupava: quem vai rolar a pedra da entrada do túmulo?","As mulheres foram ao túmulo, tristes.",{z:"L",fl:1,sk:"u"}],
+[1,"Mas, quando chegaram, perceberam algo diferente: a enorme pedra já tinha sido removida da entrada. Elas entraram, e o corpo de Jesus não estava lá. Ficaram sem entender o que tinha acontecido."],
+[1,"O túmulo estava vazio, só com os panos de linho deixados. Elas ficaram perplexas e procuraram por todo o lado. Não conseguiam imaginar que Deus estava preparando a maior surpresa da história.","O túmulo estava vazio.",{z:"C",b:[["Onde ele está?",8,8]]}],
+[2,"De repente, apareceram dois homens com roupas brilhantes, e as mulheres ficaram com medo e se curvaram até o chão. Eram anjos de Deus. Eles disseram: por que procuram entre os mortos aquele que vive?"],
+[2,"Os anjos continuaram: ele não está aqui, ressuscitou! Lembrem-se do que ele disse quando ainda estava com vocês: que seria entregue, crucificado e ao terceiro dia ressuscitaria. Então elas se lembraram das palavras de Jesus.","Ele ressuscitou, como tinha dito!",{z:"R",fl:1}],
+[3,"As mulheres saíram do túmulo correndo, com o coração cheio de alegria. Foram contar tudo aos discípulos e a todos os outros. Os homens a princípio acharam que era conversa, mas Pedro correu até o túmulo e viu os panos."],
+[3,"Mais tarde, o próprio Jesus apareceu vivo para os seus amigos. A tristeza se transformou em alegria, e o medo virou esperança. Por isso, a Páscoa é a maior festa dos cristãos: Jesus vive, e com ele nós também viveremos!","Jesus vive!",{z:"W",fl:1,sk:"d",b:[["Jesus vive!",8,10]]}]
+],
+h13:[
+[0,"No começo, Deus plantou um jardim lindo no Éden e colocou ali o homem, Adão, para cuidar dele. Havia árvores com frutas gostosas e rios de água limpa. Deus deu a Adão uma tarefa boa e disse que podia comer de todas as árvores, menos de uma."],
+[0,"Deus viu que não era bom que o homem ficasse sozinho e fez a mulher, Eva, para ser sua companheira. Os dois ficaram muito felizes e passeavam pelo jardim. Não tinham medo de nada, nem vergonha, porque viviam em paz com Deus.","Adão e Eva viviam felizes com Deus.",{z:"R",fl:1}],
+[1,"Adão deu nome aos animais, e todos viviam em harmonia. À tarde, quando a brisa soprava, Deus costumava passear no jardim e conversar com o homem e a mulher. Eles tinham tudo o que precisavam."],
+[1,"Era uma vida simples e boa: cuidar do jardim, comer as frutas, cuidar dos bichos e conversar com o Criador. Havia só uma regra, e era para o bem deles: não comer da árvore do conhecimento do bem e do mal.","Só uma regra: confiar na palavra de Deus.",{z:"C"}],
+[2,"Um dia, uma serpente se aproximou de Eva e perguntou: foi isso mesmo que Deus disse? Ela plantou a dúvida. Disse que, se comessem do fruto, ficariam como Deus. Eva olhou a fruta e achou tão bonita."],
+[2,"Eva pegou o fruto e comeu, e deu também a Adão, que comeu. Naquele instante, entenderam que tinham desobedecido. Sentiram vergonha e medo, e se esconderam de Deus entre as árvores do jardim.","Eles desobedeceram, e o medo chegou.",{z:"L",fl:1,sk:"u"}],
+[3,"Quando Deus os chamou, eles contaram o que tinham feito. A desobediência trouxe consequências, e Adão e Eva tiveram que sair do jardim. Mas Deus não os deixou sem esperança: prometeu que um dia viria alguém para vencer o mal."],
+[3,"Antes de saírem, Deus fez roupas de couro para eles e os vestiu. Mesmo quando erramos, Deus continua cuidando de nós. Ele nos ama e preparou um plano de salvação por meio de Jesus.","Mesmo depois do erro, Deus cuidou deles.",{z:"W",fl:1}]
+],
+h14:[
+[0,"Depois do dilúvio, a família de Noé cresceu, e as pessoas se espalharam. Naquele tempo, todos falavam a mesma língua. Um dia, encontraram uma planície e resolveram morar juntas ali."],
+[0,"Eles tinham tijolos e piche e sabiam construir. Em vez de agradecer a Deus, ficaram orgulhosos. Disseram: vamos fazer uma cidade e uma torre que chegue ao céu, e assim seremos famosos, para não nos espalharmos pela terra.","Eles queriam fazer um nome para si mesmos.",{z:"L",fl:1,b:[["Vamos ficar famosos!",50,8]]}],
+[1,"A torre foi crescendo, tijolo sobre tijolo, andar sobre andar. Os construtores estavam cada vez mais orgulhosos do que faziam. Eles se esqueceram de que tudo o que tinham vinha de Deus."],
+[1,"Deus desceu para ver a cidade e a torre que as pessoas construíam. Não era a torre que o incomodava, e sim o orgulho do coração delas, que queriam ficar acima de Deus. Então ele decidiu agir.","Deus viu o orgulho nos corações.",{z:"C"}],
+[2,"Deus confundiu a língua deles, de modo que uma pessoa não entendia mais o que a outra dizia. Um pedia tijolos, e o outro trazia argamassa. Ninguém se entendia mais, e o trabalho foi parando."],
+[2,"Imagine a confusão: uns gritavam, outros riam, outros ficavam bravos sem saber por quê. Sem conseguir trabalhar juntas, as pessoas largaram a obra. Deus mostrou que a verdadeira grandeza não vem do orgulho.","Ninguém mais entendia ninguém.",{z:"R",b:[["Hã? O que você disse?",8,8]]}],
+[3,"As pessoas se separaram em grupos, cada um com sua língua, e se espalharam pela terra, como Deus tinha mandado desde o início. A cidade ficou conhecida como Babel, que lembra a palavra confusão."],
+[3,"Aprendemos que Deus não gosta de orgulho, mas gosta de quem é humilde e o honra. Mais tarde, no dia de Pentecostes, Deus fez as pessoas se entenderem de novo, de um jeito lindo, falando de Jesus. Deus quer unir os povos, não dividir.","Deus quer povos unidos em amor.",{z:"W",fl:1,sk:"u"}]
+],
+h15:[
+[0,"Abraão e Sara eram um casal já de idade, que nunca tinha tido filhos. Um dia, Deus chamou Abraão e prometeu: vou fazer de você uma grande nação e abençoar todos os povos por meio de sua família. Abraão acreditou e partiu."],
+[0,"Os anos foram passando, e nada de filho. Abraão ficou preocupado e conversou com Deus sobre isso. Dizia que não tinha herdeiros, e achava difícil a promessa se cumprir. Deus ouviu com paciência.","Abraão disse a Deus o que o preocupava.",{z:"L",fl:1}],
+[1,"Numa noite, Deus levou Abraão para fora da tenda e disse: olhe para o céu e conte as estrelas, se puder. Abraão olhou para o céu enorme, cheio de pontinhos brilhantes, mais do que alguém poderia contar."],
+[1,"Deus então prometeu: assim será a sua família. Não seria apenas um filho, mas uma descendência tão numerosa quanto as estrelas do céu. Era uma promessa enorme para um homem que ainda não tinha nem um filho.","Tantas estrelas quantos os seus descendentes!",{z:"TR",fl:1}],
+[2,"Abraão ouviu a promessa de Deus. Ele não tinha provas, não via nenhum sinal de que aconteceria, mas escolheu acreditar em Deus. Levantou os olhos e o coração e confiou no Senhor."],
+[2,"A Bíblia diz que Deus considerou essa fé como justiça. Isso quer dizer que Deus ficou contente por Abraão confiar nele. Confiar em Deus, mesmo quando não entendemos, é um jeito de agradar a ele.","Abraão confiou, e Deus se agradou.",{z:"C",b:[["Eu confio no Senhor!",50,8]]}],
+[3,"Passou-se o tempo, e Deus cumpriu o que prometera. Sara, mesmo idosa, teve um filho, e deram a ele o nome de Isaque, que quer dizer riso. A casa se encheu de alegria."],
+[3,"Abraão e Sara tinham esperado muito, mas Deus nunca esqueceu a promessa. O Senhor sempre cumpre o que diz, mesmo quando demora mais do que gostaríamos. Quando olharmos para as estrelas, vamos lembrar da fidelidade de Deus.","Deus cumpre o que promete, no tempo certo.",{z:"W",fl:1,sk:"u"}]
+],
+h16:[
+[0,"Jacó tinha enganado o seu irmão Esaú e precisou fugir de casa para escapar da raiva dele. Saiu sozinho, a pé, rumo à terra do seu tio Labão. Estava longe da família e sentia muita insegurança."],
+[0,"Quando anoiteceu, Jacó parou num lugar deserto, sem casa nem cama. Pegou uma pedra para servir de travesseiro e se deitou no chão. Ele estava com medo e talvez com vergonha do que tinha feito.","Longe de casa, Jacó se deitou no chão.",{z:"L",fl:1,sk:"u"}],
+[1,"Naquela noite, Jacó teve um sonho. Viu uma escada apoiada na terra, cujo topo chegava ao céu. Anjos de Deus subiam e desciam por ela. Era como se o céu e a terra estivessem ligados."],
+[1,"No topo da escada estava o próprio Senhor. Jacó nem imaginava que Deus ia procurá-lo logo ali, naquele lugar vazio e depois de ter errado tanto. Deus não abandona quem se sente sozinho.","Deus apareceu num lugar inesperado.",{z:"C",sk:"n"}],
+[2,"Deus falou com Jacó: sou o Deus de Abraão e de Isaque. Esta terra será sua e de seus descendentes, e por meio de vocês todos os povos da terra serão abençoados. E disse a promessa mais bonita."],
+[2,"Eu estou com você e o guardarei por onde quer que você for. Não o deixarei até cumprir tudo o que lhe prometi. Jacó estava sozinho na estrada, mas descobriu que Deus ia com ele, em cada passo.","Deus prometeu ficar com Jacó.",{z:"R",fl:1,b:[["Eu estou com você!",50,8]]}],
+[3,"De manhã cedo, Jacó acordou assustado e disse: com certeza o Senhor está neste lugar, e eu não sabia! Ele ficou com respeito e alegria ao mesmo tempo."],
+[3,"Jacó pegou a pedra que usara como travesseiro, colocou-a em pé e derramou óleo sobre ela, como um marco do lugar. Chamou aquele lugar de Betel, casa de Deus. Onde quer que a gente esteja, Deus pode estar perto.","Betel: o lugar onde Jacó encontrou Deus.",{z:"W",sk:"d"}]
+],
+h17:[
+[0,"O povo de Israel estava no Egito e tinha crescido muito. O novo faraó ficou com medo e ordenou que todos os meninos hebreus recém-nascidos fossem jogados no rio Nilo. Foi um tempo muito difícil para as famílias."],
+[0,"Uma mulher da família de Levi teve um filho e viu que ele era um bebê bonito. Ela o escondeu em casa durante três meses. Mas, quando já não podia mais escondê-lo, teve que pensar em outro jeito de protegê-lo.","A mãe fez tudo o que pôde pelo bebê.",{z:"L",fl:1}],
+[1,"Ela pegou uma cesta de junco, passou piche para impedir que entrasse água e colocou o bebê dentro. Em seguida, deixou a cesta entre os juncos, na beira do rio. Ela confiou o filho a Deus."],
+[1,"A irmã do menino, Miriã, ficou de longe, de olho, para ver o que aconteceria. A cesta balançava devagarinho no rio, e Miriã não tirava os olhos dela. Ela era corajosa e esperta, e Deus a usou para ajudar o irmão.","Miriã vigiou o irmãozinho.",{z:"R"}],
+[2,"A filha do faraó desceu ao rio para tomar banho e viu a cesta entre os juncos. Mandou a criada trazê-la. Quando abriu e viu o bebê chorando, teve compaixão dele."],
+[2,"Era um menino hebreu, mas a princesa quis ficar com ele. Então Miriã correu até ela e perguntou: quer que eu procure uma mulher hebreia para cuidar dele? A princesa respondeu que sim. E Miriã chamou a própria mãe.","Miriã teve uma ideia muito esperta.",{z:"C",b:[["Que bebê lindo!",50,8]]}],
+[3,"A princesa entregou o bebê à mãe de Moisés e ainda prometeu pagá-la para cuidar dele. A mãe pôde criar o filho nos primeiros anos, em segurança. Era uma resposta de Deus à sua oração."],
+[3,"Quando o menino cresceu, foi levado à princesa, que o adotou e lhe deu o nome de Moisés, que quer dizer tirado das águas. Deus preparava aquele menino para, um dia, libertar o seu povo. Deus cuida de nós desde o começo.","Deus cuidou de Moisés desde bebê.",{z:"W",fl:1}]
+],
+h18:[
+[0,"Moisés tinha crescido no palácio do Egito, mas depois fugiu para o deserto e virou pastor. Durante quarenta anos, cuidou das ovelhas do sogro, Jetro. A vida era calma e simples, e Moisés já era um homem de idade."],
+[0,"Um dia, enquanto levava o rebanho para o outro lado do deserto, chegou ao monte Horebe. O sol era forte, as pedras eram quentes, e nada parecia diferente. Mas ali, Deus tinha preparado uma surpresa.","Um dia comum, até que algo estranho aconteceu.",{z:"L",fl:1}],
+[1,"Moisés viu uma sarça pegando fogo, mas ela não se consumia, apesar das chamas. Ele pensou: vou chegar mais perto para ver por que a sarça não se queima. Foi com curiosidade."],
+[1,"Quando o Senhor viu que Moisés se aproximava, chamou-o do meio da sarça: Moisés, Moisés! Ele respondeu: eis-me aqui. Deus disse que tirasse as sandálias dos pés, porque o lugar em que estava era terra santa.","Terra santa: Deus estava ali.",{z:"C",b:[["Que estranho!",8,8]]}],
+[2,"Deus disse: eu vi a aflição do meu povo no Egito e ouvi o seu clamor. Vou libertá-lo, e quero que você vá ao faraó para tirar o meu povo de lá. Moisés ficou assustado."],
+[2,"Moisés fez muitas perguntas e disse que não era capaz, e que não falava bem. Mas Deus respondeu com a frase mais importante: eu estarei com você. A coragem de Moisés não vinha de si mesmo, mas da presença de Deus.","Moisés tinha medo, mas Deus prometeu ficar com ele.",{z:"R",fl:1}],
+[3,"Deus também revelou o seu nome a Moisés: Eu Sou. Quis dizer que ele sempre esteve, está e estará presente. E deu um sinal: o cajado de Moisés, quando jogado ao chão, virou cobra, e depois voltou a ser cajado."],
+[3,"Moisés aceitou a missão. Voltou para o Egito, com seu irmão Arão como ajudante, para pedir ao faraó que soltasse o povo. Deus não escolhe os mais fortes, mas capacita aqueles que dizem sim ao seu chamado.","Moisés disse sim a Deus.",{z:"W",b:[["Aqui estou!",50,8]]}]
+],
+h19:[
+[0,"Depois que Deus libertou o povo do Egito, eles caminharam pelo deserto e chegaram ao monte Sinai. Acamparam ao pé do monte. Deus chamou Moisés para subir até ele e disse que tinha algo muito importante para entregar."],
+[0,"O povo ficou esperando lá embaixo. O monte ficou coberto por uma nuvem escura, e Moisés subiu sozinho. Foi um momento de muito respeito: todos sabiam que Deus estava prestes a falar com eles.","Moisés subiu para encontrar Deus.",{z:"L",fl:1}],
+[1,"No topo do monte, havia trovões, relâmpagos e uma nuvem densa. O povo tremia de respeito. Deus falou, e deu a Moisés as dez palavras, ou mandamentos, para guiar a vida do seu povo."],
+[1,"Os primeiros mandamentos falam de como amar a Deus: não ter outros deuses, não fazer ídolos, usar o seu nome com respeito e guardar o dia de descanso. Deus quer ser o primeiro no nosso coração.","Primeiro, amar a Deus.",{z:"C",sk:"s"}],
+[2,"Os outros mandamentos mostram como amar as pessoas: honrar pai e mãe, não matar, não roubar, não mentir e não ter inveja do que é dos outros. Deus escreveu tudo isso em duas tábuas de pedra."],
+[2,"Moisés desceu o monte com as tábuas nas mãos. Aquelas leis não eram para tornar a vida difícil, mas para proteger o povo e mostrar o caminho do bem. Deus as deu porque ama o seu povo e quer vê-lo feliz.","As leis mostram o caminho do bem.",{z:"R",fl:1,b:[["Deus nos mostra como viver!",8,8]]}],
+[3,"Jesus mais tarde resumiu todos os mandamentos em dois: amar a Deus de todo o coração e amar o próximo como a nós mesmos. Quando a gente ama assim, os mandamentos ficam mais fáceis de cumprir."],
+[3,"Hoje, em casa, podemos praticar os mandamentos: respeitar pai e mãe, falar a verdade, dividir o que temos e agradecer a Deus. Cada vez que obedecemos com alegria, mostramos que amamos ao Senhor e às pessoas.","Obedecer é uma forma de amar.",{z:"W",fl:1}]
+],
+h20:[
+[0,"Moisés tinha morrido, e agora Josué era o líder do povo. Deus os levou até a terra que tinha prometido. Mas, para entrar, tinham que passar por Jericó, uma cidade cercada por muros altos e grossos, com portões fechados."],
+[0,"Josué olhou para aquele muro e provavelmente pensou: como vamos entrar? Era uma cidade bem protegida. Mas Deus disse a Josué: eu entreguei a cidade nas suas mãos. E deu instruções que pareciam estranhas.","Os muros pareciam impossíveis de vencer.",{z:"R",fl:1}],
+[1,"O plano de Deus era este: durante seis dias, todos os soldados marchariam uma vez ao redor da cidade, com sete sacerdotes à frente tocando trombetas. E o povo devia ficar em silêncio, sem dizer uma palavra."],
+[1,"No sétimo dia, deviam dar sete voltas. Ninguém podia gritar até a hora certa. Era um plano que exigia confiança, porque, aos olhos humanos, marchar não derruba muro nenhum. O povo obedeceu, dia após dia.","Marchar em silêncio, obedecendo a Deus.",{z:"C",b:[["Vamos obedecer!",8,8]]}],
+[2,"No sétimo dia, o povo acordou cedo e deu sete voltas em torno da cidade. Na sétima volta, os sacerdotes tocaram as trombetas com toda a força, e Josué disse: gritem, pois o Senhor lhes entregou a cidade!"],
+[2,"Todos gritaram bem alto, e a terra tremeu. Foi um dos momentos mais emocionantes da história do povo de Israel. Ninguém tinha usado nenhuma arma, apenas obedecido a Deus do jeito que ele mandou.","A obediência abriu o caminho.",{z:"L",fl:1,b:[["Viva o Senhor!",50,8]]}],
+[3,"O muro de Jericó caiu. O povo entrou na cidade, cada um por onde estava, e a vitória foi grande. A Bíblia lembra que isso aconteceu pela fé, porque Deus fez o que prometeu."],
+[3,"Rahab, uma mulher da cidade que tinha ajudado os espiões de Josué e acreditado em Deus, foi poupada com a sua família. O Senhor cuida dos que confiam nele. Às vezes, Deus pede coisas que parecem estranhas, mas, quando obedecemos, ele faz o impossível.","A fé derrubou os muros.",{z:"W"}]
+],
+h21:[
+[0,"Noemi e o marido tinham saído de Belém por causa da fome e ido morar em Moabe. Lá, os dois filhos de Noemi se casaram, mas, depois de um tempo, o marido e os filhos morreram. Noemi ficou viúva e muito triste."],
+[0,"Noemi decidiu voltar para Belém, pois soube que Deus tinha dado pão ao seu povo. Disse às noras que voltassem para suas famílias. Orfa voltou, mas Rute, a outra nora, quis ficar com a sogra.","Rute escolheu ficar com Noemi.",{z:"L",fl:1,b:[["Aonde você for, eu vou.",50,8]]}],
+[1,"Rute disse: o seu povo será o meu povo, e o seu Deus será o meu Deus. Era uma decisão de amor e de fé. As duas viajaram juntas até Belém, onde chegaram na época da colheita da cevada."],
+[1,"Como eram pobres, Rute foi ao campo recolher espigas que os ceifeiros deixavam para trás, como a lei permitia aos pobres. Era um trabalho cansativo, debaixo de sol, mas ela não reclamou. Queria cuidar da sogra.","Rute trabalhou duro para cuidar de Noemi.",{z:"C"}],
+[2,"Por acaso, o campo em que Rute foi trabalhar pertencia a Boaz, que era parente de Noemi. Quando ele chegou para ver os trabalhadores, perguntou quem era aquela moça. Ouviu que era a moabita que tinha voltado com Noemi."],
+[2,"Boaz foi muito gentil. Pediu que ela ficasse no seu campo, mandou que os trabalhadores a respeitassem e deixou que bebesse da água deles. Ele já tinha ouvido falar do carinho de Rute pela sogra.","Boaz tratou Rute com bondade.",{z:"R",fl:1,b:[["Pode pegar o quanto precisar.",8,8]]}],
+[3,"Rute voltou para casa com muita cevada, e Noemi ficou admirada. Contou quem era o dono do campo, e Noemi se alegrou. Deus estava cuidando delas pelas mãos de pessoas bondosas."],
+[3,"Com o tempo, Boaz e Rute se casaram, e a tristeza de Noemi virou alegria. Mais tarde, a família de Rute teve um bisneto chamado Davi, que seria rei. Deus nunca esquece quem é fiel, e usa até os dias difíceis para um plano bonito.","Deus transformou a tristeza em alegria.",{z:"W",fl:1}]
+],
+h22:[
+[0,"Samuel era um menino que morava no templo e ajudava o sacerdote Eli. Sua mãe, Ana, tinha pedido a Deus um filho e prometido que o entregaria ao serviço do Senhor. Samuel crescia ali, perto da casa de Deus."],
+[0,"Naquele tempo, era raro ouvir a voz de Deus, e poucos recebiam mensagens dele. Todas as noites, Samuel se deitava perto da arca de Deus, no templo, com a lamparina ainda acesa.","Samuel dormia perto da casa de Deus.",{z:"L",fl:1,sk:"n"}],
+[1,"Certa noite, Samuel ouviu uma voz que o chamava pelo nome: Samuel! Ele achou que era o velho Eli e correu até ele. Mas Eli disse que não tinha chamado e mandou que voltasse a dormir."],
+[1,"Aconteceu uma segunda vez e uma terceira. Cada vez, Samuel corria até Eli, e Eli dizia que não o tinha chamado. Samuel ainda não conhecia a voz do Senhor.","Samuel ainda não conhecia a voz de Deus.",{z:"C",b:[["Samuel! Samuel!",50,8]]}],
+[2,"Na terceira vez, Eli percebeu que era Deus quem chamava o menino. Então ensinou: volte a deitar-se e, se o chamarem de novo, diga: fala, Senhor, porque o teu servo está ouvindo."],
+[2,"Samuel voltou ao seu lugar. Dessa vez, estava de coração aberto. Eli, apesar de velho, mostrou como é importante ensinar a quem é mais novo a ouvir a Deus. Nós também podemos ajudar as crianças a conhecer a voz do Senhor.","Eli ensinou Samuel a responder a Deus.",{z:"R",fl:1,b:[["Responda: Fala, Senhor!",8,8]]}],
+[3,"O Senhor chamou outra vez: Samuel, Samuel! E o menino respondeu: fala, que o teu servo está ouvindo. Deus então lhe deu uma mensagem, mesmo difícil, e Samuel contou tudo a Eli, sem esconder nada."],
+[3,"Samuel cresceu, e o Senhor esteve com ele. Todo o povo, de uma ponta a outra, soube que Samuel era um profeta de Deus. Mesmo sendo criança, Samuel foi usado por Deus. Também nós podemos ouvir Deus quando lemos a Bíblia e oramos.","Samuel cresceu ouvindo a Deus.",{z:"W",b:[["Fala, que o teu servo ouve.",50,8]]}]
+],
+h23:[
+[0,"O rei Saul tinha desobedecido a Deus, e o Senhor disse ao profeta Samuel que escolheria outro rei. Mandou que ele levasse um chifre de óleo até Belém, à casa de Jessé, onde encontraria o novo rei."],
+[0,"Samuel obedeceu, mesmo com receio de Saul, e chegou a Belém. Convidou Jessé e os filhos para um sacrifício. Um por um, os filhos de Jessé passaram diante do profeta, e Samuel os olhava com atenção.","Samuel foi à casa de Jessé.",{z:"L",fl:1}],
+[1,"Quando Samuel viu Eliabe, o filho mais velho, alto e forte, pensou: com certeza este é o escolhido do Senhor. Ele tinha a aparência de um rei. Mas Deus tinha outros critérios."],
+[1,"O Senhor disse a Samuel: não olhe para a aparência nem para a altura dele, porque eu o rejeitei. O Senhor não vê como o homem vê. O homem olha para a aparência, mas o Senhor olha para o coração.","Deus olha para o que está dentro.",{z:"C",b:[["Este deve ser!",8,8]]}],
+[2,"Jessé apresentou sete filhos a Samuel, e Deus disse não a cada um. Samuel perguntou: são estes todos os seus filhos? Jessé respondeu que ainda restava o mais novo, que estava cuidando das ovelhas."],
+[2,"Samuel mandou chamar o menino e disse que ninguém se sentaria à mesa antes de ele chegar. Todos esperaram. Estava pastoreando, longe dos olhares, mas Deus já o conhecia e já o tinha escolhido.","O menor da casa estava no campo com as ovelhas.",{z:"R",fl:1}],
+[3,"Davi chegou, de rosto corado, bonito e de olhar vivo. O Senhor disse: levante-se e unja-o, pois é este. Samuel derramou o óleo sobre a sua cabeça diante dos irmãos, e o Espírito do Senhor veio sobre Davi."],
+[3,"Davi voltou para as ovelhas, mas, dali em diante, estava marcado por Deus. Um dia seria rei de Israel. Deus escolhe pessoas pelo coração, e não pela aparência. Ele pode usar qualquer um de nós, até os menores e menos notados.","Deus escolheu Davi pelo coração.",{z:"W",fl:1}]
+],
+h24:[
+[0,"Salomão era filho do rei Davi e foi coroado rei ainda muito jovem. Ele amava ao Senhor e seguia os bons exemplos do pai. Sabia que governar um povo tão grande era uma tarefa pesada."],
+[0,"Salomão foi até Gibeão para oferecer sacrifícios a Deus, mil deles, mostrando o quanto o respeitava. Naquela noite, enquanto dormia, o Senhor apareceu a ele em sonho.","Salomão dormiu e Deus falou com ele.",{z:"L",fl:1,sk:"n"}],
+[1,"No sonho, Deus disse: peça o que quiser, e eu lhe darei. Imagine que oportunidade! Ele poderia ter pedido riquezas, uma vida longa ou a derrota dos inimigos. Mas pensou antes de responder."],
+[1,"Salomão agradeceu a Deus por ter sido bom com o seu pai Davi e reconheceu: eu sou apenas um jovem e não sei como governar. Ele se sentia pequeno diante do tamanho da tarefa e queria fazer o certo.","Salomão reconheceu que precisava de ajuda.",{z:"C",b:[["Pede o que quiseres!",8,8]]}],
+[2,"Então Salomão fez o seu pedido: dá ao teu servo um coração que entenda, para governar o teu povo e saber distinguir o bem do mal. Ele não pediu para si, mas para poder servir bem ao povo."],
+[2,"Essa resposta agradou muito a Deus. Salomão podia ter pedido riquezas, vida longa ou vitória sobre os inimigos, mas pediu sabedoria. Quando pedimos a Deus coisas que ajudam os outros, ele fica contente.","Salomão pediu sabedoria.",{z:"R",fl:1,b:[["Dá-me um coração que entenda!",8,8]]}],
+[3,"Deus respondeu: já que você pediu sabedoria, vou lhe dar um coração sábio e entendido, como ninguém teve antes nem terá depois. E ainda lhe darei o que não pediu: riquezas e honra."],
+[3,"Salomão acordou e percebeu que era um sonho de Deus. Voltou a Jerusalém e agradeceu. Tornou-se conhecido pela sua sabedoria. Se faltar sabedoria, a Bíblia ensina que podemos pedi-la a Deus, e ele dá com generosidade.","Deus deu mais do que Salomão pediu.",{z:"W",fl:1}]
+],
+h25:[
+[0,"O rei Acabe e o povo de Israel tinham deixado de adorar ao Senhor e adoravam o ídolo Baal. Por isso, não chovia havia três anos, e a terra estava seca. O profeta Elias foi falar com o rei."],
+[0,"Elias pediu que todo o povo se reunisse no monte Carmelo, junto com os profetas de Baal. Quando todos chegaram, Elias disse: até quando vocês ficarão em dúvida? Se o Senhor é Deus, sigam o Senhor.","Elias chamou o povo a escolher.",{z:"L",fl:1}],
+[1,"Elias propôs um teste: cada lado prepararia um sacrifício e oraria ao seu deus. O Deus que respondesse com fogo seria o verdadeiro. Os profetas de Baal oraram e gritaram o dia inteiro, mas nada aconteceu."],
+[1,"Chegou a vez de Elias. Ele reconstruiu o altar do Senhor com doze pedras, uma para cada tribo de Israel. Cavou uma vala ao redor e mandou derramar água sobre o sacrifício, três vezes, para que não restasse dúvida.","Elias deixou tudo encharcado, para mostrar o poder de Deus.",{z:"C",b:[["Mostra quem és, Senhor!",8,8]]}],
+[2,"Então Elias fez uma oração simples: Senhor, Deus de Abraão, Isaque e Israel, que hoje se saiba que tu és Deus em Israel e que eu sou teu servo. Ele não precisou gritar nem se agitar."],
+[2,"De repente, caiu fogo do Senhor e queimou o sacrifício, a lenha, as pedras, a terra e até a água da vala. Ninguém tinha dúvida de quem era o verdadeiro Deus. O povo ficou espantado.","O fogo do Senhor desceu do céu.",{z:"R",fl:1}],
+[3,"Ao ver isso, o povo caiu de rosto no chão e disse: o Senhor é Deus! O Senhor é Deus! Eles voltaram a reconhecer quem os criou e cuidava deles. Depois, Elias subiu ao topo do monte e orou pedindo chuva."],
+[3,"Por sete vezes, Elias mandou o servo olhar para o mar. Na sétima, ele viu uma pequena nuvem, do tamanho da mão de um homem. Logo o céu escureceu, e veio uma grande chuva. Deus responde à oração de quem confia nele.","Depois da oração, veio a chuva.",{z:"W",fl:1,sk:"s",b:[["Só o Senhor é Deus!",8,10]]}]
+],
+h26:[
+[0,"Naamã era um comandante muito respeitado do exército da Síria. Mas tinha um problema sério: estava doente, com uma doença de pele chamada lepra, e nenhum médico conseguia curá-lo. Ele vivia triste por isso."],
+[0,"Na casa de Naamã, trabalhava uma menina israelita que tinha sido levada como cativa. Mesmo longe de casa, ela se importava com o seu patrão. Disse à esposa dele: se ele fosse ao profeta de Samaria, seria curado.","Uma menininha mostrou o caminho da cura.",{z:"L",fl:1,b:[["Deus pode curar você!",50,8]]}],
+[1,"Naamã contou ao rei, e este lhe deu uma carta para o rei de Israel. Naamã levou prata, ouro e roupas finas. Chegando lá, o profeta Eliseu mandou dizer que Naamã fosse até ele."],
+[1,"Naamã chegou com seus cavalos e carros e parou diante da casa de Eliseu. Mas o profeta nem saiu: mandou um servo dizer que Naamã se lavasse sete vezes no rio Jordão, e assim ficaria curado.","Eliseu mandou uma mensagem simples.",{z:"C",b:[["Lave-se no Jordão.",8,8]]}],
+[2,"Naamã ficou furioso. Esperava que o profeta saísse, orasse e fizesse algum gesto especial. Disse que os rios da sua terra eram melhores que o Jordão. Foi embora com raiva, mas seus servos o convenceram."],
+[2,"Os servos disseram: se o profeta tivesse pedido algo difícil, o senhor faria. Então por que não fazer algo tão simples? Naamã desceu ao Jordão e mergulhou sete vezes, como o profeta tinha mandado.","Naamã obedeceu, mesmo sem entender.",{z:"R",fl:1}],
+[3,"Quando saiu da água da sétima vez, sua pele estava como a de uma criança, limpa e saudável. Naamã ficou muito feliz e voltou ao profeta para agradecer, reconhecendo que não havia Deus em toda a terra a não ser em Israel."],
+[3,"A cura veio porque Naamã deixou o orgulho de lado e obedeceu. Foi uma menina pequena, um servo e um profeta que ajudaram um general poderoso. Deus usa gente simples e pede obediência humilde, e as bênçãos vêm.","Deus curou Naamã por meio da obediência.",{z:"W",fl:1,b:[["Agora sei que Deus é real!",8,10]]}]
+],
+h27:[
+[0,"Ester era uma jovem judia que vivia na Pérsia, o grande império daquele tempo. Ela ficou órfã e foi criada pelo primo Mordecai. Quando o rei procurou uma nova rainha, Ester foi escolhida, e se tornou rainha."],
+[0,"Mordecai pediu que Ester não contasse a ninguém que era judia. Assim, ela viveu no palácio sem revelar sua origem. Estava segura e vivia com conforto, mas logo viria uma situação muito perigosa.","Ester era rainha, mas guardava um segredo.",{z:"L",fl:1}],
+[1,"Um homem chamado Hamã, que era o segundo no reino, odiava os judeus e convenceu o rei a assinar uma lei: num certo dia, todos os judeus do império seriam destruídos. Mordecai ficou desesperado."],
+[1,"Ele mandou um aviso a Ester, pedindo que fosse até o rei e rogasse pelo seu povo. Mas entrar na presença do rei sem ser chamado era perigoso. Mordecai disse: quem sabe você chegou a ser rainha justamente para este momento?","Talvez Deus tenha colocado Ester ali para um momento assim.",{z:"R",b:[["Você pode salvar o nosso povo.",8,8]]}],
+[2,"Ester pediu que todos os judeus jejuassem e orassem por ela durante três dias. Depois, disse: se eu tiver que morrer, morrerei. Ela tomou coragem e decidiu fazer o que era certo, mesmo com medo."],
+[2,"Vestiu suas roupas reais e foi ao pátio onde o rei estava. O coração batia forte. Quando o rei a viu, estendeu o cetro de ouro para ela, e Ester pôde se aproximar. Deus tinha aberto o caminho.","O rei estendeu o cetro, e Ester pôde falar.",{z:"C",b:[["Eu vou falar com o rei!",8,8]]}],
+[3,"Ester convidou o rei e Hamã para dois banquetes. No segundo, contou tudo: o seu povo estava ameaçado, e ela também era judia. O rei ficou muito bravo ao descobrir o plano de Hamã."],
+[3,"O rei revogou a ordem e deu aos judeus o direito de se defenderem. O povo foi salvo, e Mordecai foi honrado. Ester arriscou a vida por amor ao seu povo. Quando temos coragem de fazer o bem, Deus pode usar a nossa vida para grandes coisas.","Ester foi corajosa, e o povo foi salvo.",{z:"W",fl:1,b:[["Peça, e eu atenderei.",50,8]]}]
+],
+h28:[
+[0,"O rei Nabucodonosor, da Babilônia, mandou fazer uma enorme estátua de ouro. Depois, ordenou que, quando a música tocasse, todos se curvassem e a adorassem. Quem não obedecesse seria jogado numa fornalha de fogo."],
+[0,"Quando a música soou, todos se prostraram diante da estátua. Mas havia três jovens judeus, Sadraque, Mesaque e Abede-Nego, que tinham grandes cargos na Babilônia e que serviam apenas ao Deus verdadeiro.","Todos se curvaram, menos três amigos.",{z:"R",fl:1}],
+[1,"Alguns babilônios foram contar ao rei que os três não adoravam a estátua. Nabucodonosor ficou furioso e mandou chamá-los. Deu-lhes uma nova chance: se não adorassem, seriam jogados na fornalha."],
+[1,"Os três responderam com coragem: o nosso Deus pode nos livrar da fornalha, e ele nos livrará. Mas, mesmo que não livre, saiba, ó rei, que não serviremos aos seus deuses. Eles confiavam em Deus em qualquer situação.","Eles disseram não, mesmo com medo.",{z:"C",b:[["Só adoramos a Deus.",8,8]]}],
+[2,"O rei mandou acender a fornalha sete vezes mais quente. Os soldados que jogaram os três amarrados lá dentro morreram com o calor. Mas o que aconteceu com os amigos dentro da fornalha foi surpreendente."],
+[2,"O rei olhou e se espantou: eu vejo quatro homens soltos, andando no meio do fogo, sem nenhum dano, e o quarto parece um filho dos deuses! Deus tinha enviado alguém para estar com eles dentro do fogo.","Alguém estava com eles no fogo.",{z:"R",fl:1,sk:"u"}],
+[3,"Nabucodonosor chamou os três para saírem. Eles saíram sem nenhuma queimadura, sem cheiro de fumaça nas roupas e sem nem um fio de cabelo chamuscado. Todos os governantes ficaram admirados."],
+[3,"O rei reconheceu: bendito seja o Deus de Sadraque, Mesaque e Abede-Nego, que enviou o seu anjo e livrou os seus servos que confiaram nele. Deus nem sempre tira a gente do fogo, mas sempre está lá com a gente.","Deus esteve com eles no meio do fogo.",{z:"W",fl:1,b:[["O Deus deles é incrível!",8,10]]}]
+],
+h29:[
+[0,"Maria era uma jovem de Nazaré, uma cidadezinha da Galileia. Estava noiva de José, um carpinteiro da família de Davi. Era uma moça simples, que amava a Deus e levava uma vida tranquila na sua casa."],
+[0,"Certo dia, algo muito especial aconteceu. Deus enviou o anjo Gabriel até Nazaré, e o anjo entrou onde Maria estava. A moça deve ter ficado muito surpresa ao ver um mensageiro de Deus.","Um dia, Deus mandou um anjo a Nazaré.",{z:"R",fl:1}],
+[1,"O anjo disse: salve, Maria, cheia de graça! O Senhor está contigo. Maria ficou perturbada com essas palavras e se perguntou o que aquilo queria dizer. Então o anjo a tranquilizou."],
+[1,"Não tenha medo, Maria, porque você encontrou graça diante de Deus. Você dará à luz um filho e lhe porá o nome de Jesus. Ele será grande, será chamado Filho do Altíssimo, e o seu reino não terá fim.","A promessa: um filho chamado Jesus.",{z:"C",b:[["Não tenha medo, Maria!",8,8]]}],
+[2,"Maria perguntou como aquilo poderia acontecer, e o anjo explicou que o Espírito Santo viria sobre ela. Disse também que a sua parente Isabel, que já era idosa, esperava um filho: para Deus, nada é impossível."],
+[2,"Maria pensou em tudo o que isso significaria, e não seria fácil. Mas ela confiava em Deus. Respondeu: eis aqui a serva do Senhor, que aconteça comigo como disseste. Maria disse sim a Deus.","Maria disse sim a Deus.",{z:"L",fl:1,b:[["Que aconteça como disseste.",50,8]]}],
+[3,"Depois, Maria foi visitar Isabel, e a criança no ventre de Isabel se alegrou quando ouviu a voz de Maria. Isabel disse que Maria era bendita porque tinha acreditado no que o Senhor falara."],
+[3,"Então Maria cantou uma linda canção de louvor, que começa assim: a minha alma engrandece ao Senhor. Ela estava cheia de alegria, porque Deus olhou para uma moça simples e fez grandes coisas. Deus escolhe os humildes.","Maria louvou a Deus de coração alegre.",{z:"W",sk:"d"}]
+],
+h30:[
+[0,"João Batista era primo de Jesus e vivia no deserto. Usava roupas de pelo de camelo e se alimentava de gafanhotos e mel silvestre. Pessoas de toda a região iam até ele, e João lhes falava da vinda do Salvador."],
+[0,"João pregava: mudem de vida, porque o reino dos céus está perto! Muitos se arrependiam dos seus erros, e ele os batizava nas águas do rio Jordão. Era um sinal de que queriam um novo começo com Deus.","João preparava o povo para receber Jesus.",{z:"L",fl:1}],
+[1,"João dizia ao povo que logo viria alguém muito maior, de quem ele nem era digno de desamarrar as sandálias. E, um dia, quando João estava batizando, essa pessoa chegou: era Jesus, que veio da Galileia."],
+[1,"Jesus se aproximou de João e pediu para ser batizado por ele. João ficou surpreso: o senhor vem a mim? Eu é que preciso ser batizado pelo senhor! Mas Jesus explicou que era o certo a fazer, e João obedeceu.","Jesus pediu para ser batizado.",{z:"R"}],
+[2,"Assim que Jesus saiu da água, o céu se abriu. O Espírito de Deus desceu como uma pomba e pousou sobre ele. Foi um momento único, em que o Pai, o Filho e o Espírito Santo se mostraram juntos."],
+[2,"Então se ouviu uma voz do céu, a voz do próprio Pai: este é o meu Filho amado, em quem me agrado. Aquelas palavras mostraram a todos quem era Jesus e como Deus o amava.","A voz do Pai falou do céu.",{z:"C",sk:"d",b:[["Este é o meu Filho amado!",50,8]]}],
+[3,"Depois do batismo, Jesus foi levado ao deserto, onde ficou quarenta dias orando e jejuando. Lá, enfrentou as tentações do inimigo e respondeu a cada uma com a Palavra de Deus."],
+[3,"Então Jesus voltou à Galileia e começou a sua missão: ensinar, curar os doentes e chamar discípulos. O batismo marcou o início de um ministério de amor, que mudou o mundo. Nós também podemos seguir o seu exemplo.","Jesus começou a sua missão.",{z:"W",fl:1}]
+],
+h31:[
+[0,"Jesus ia de cidade em cidade, curando doentes e ensinando. A fama dele se espalhou, e multidões o seguiam, vindas de longe. Um dia, ao ver tanta gente, Jesus subiu a um monte para ensinar."],
+[0,"Os discípulos se sentaram perto dele, e a multidão se juntou em volta. Todos queriam ouvir o que Jesus ia dizer. Ele começou a falar de um jeito diferente de tudo o que as pessoas já tinham ouvido.","Todos se reuniram para ouvir Jesus.",{z:"L",fl:1}],
+[1,"Jesus disse que são felizes os pobres em espírito, os que choram, os mansos, os que têm fome de justiça, os misericordiosos, os de coração limpo e os que promovem a paz. Era uma maneira nova de enxergar a felicidade."],
+[1,"Para Jesus, felizes são os que dependem de Deus e tratam bem os outros, e não apenas os ricos ou poderosos. Os que fazem a paz serão chamados filhos de Deus. Ele ensinava um jeito de viver que agrada ao Pai.","As bem-aventuranças ensinam a verdadeira felicidade.",{z:"C",b:[["Felizes os que promovem a paz!",8,8]]}],
+[2,"Jesus continuou: vocês são o sal da terra e a luz do mundo. Uma cidade construída sobre um monte não pode ficar escondida. E ninguém acende uma lâmpada para colocá-la debaixo de uma vasilha."],
+[2,"A lâmpada é colocada no alto para iluminar todos da casa. Assim também deve brilhar a luz de vocês: para que vejam as suas boas obras e louvem o Pai que está no céu. Nossa bondade ilumina quem está ao redor.","Somos luz quando fazemos o bem.",{z:"R",fl:1,sk:"n",b:[["Vocês são a luz do mundo!",8,8]]}],
+[3,"Jesus também ensinou a amar os inimigos, a orar por quem nos maltrata, a perdoar e a não se preocupar demais com o amanhã, porque o Pai cuida de nós, como cuida dos passarinhos e das flores do campo."],
+[3,"Quando o sermão terminou, as pessoas ficaram admiradas, porque Jesus ensinava com autoridade. Voltaram para casa pensando em tudo o que tinham ouvido. Nós também podemos guardar essas palavras no coração e viver como Jesus ensinou.","As palavras de Jesus ficaram no coração.",{z:"W",fl:1,sk:"u"}]
+],
+h32:[
+[0,"Jesus tinha atravessado o lago da Galileia, e uma grande multidão o seguiu, porque tinha visto os milagres que ele fazia. Ele subiu a um monte, sentou-se com os discípulos e viu muita gente chegando."],
+[0,"Eram cerca de cinco mil homens, sem contar as mulheres e as crianças. Já era tarde, e todos estavam longe de casa, num lugar deserto. Jesus perguntou a Filipe onde poderiam comprar pão para aquela gente toda.","Uma multidão enorme, e ninguém tinha o que comer.",{z:"R",fl:1}],
+[1,"Filipe respondeu que nem com muito dinheiro seria possível comprar o suficiente. Então André, outro discípulo, falou: aqui está um menino que tem cinco pães de cevada e dois peixinhos. Mas o que é isso para tanta gente?"],
+[1,"O menino poderia ter guardado seu lanche só para si. Mas entregou tudo a Jesus, com o coração aberto. Jesus não precisa de muito: ele pega o pouco que oferecemos e faz coisas grandes com ele.","O menino deu tudo o que tinha.",{z:"C",b:[["Tenho cinco pães e dois peixes.",8,8]]}],
+[2,"Jesus mandou que a multidão se sentasse na grama, em grupos. Depois pegou os pães, olhou para o céu, deu graças a Deus e começou a repartir. Os discípulos distribuíam aos que estavam sentados."],
+[2,"O pão e os peixes não acabavam: cada pessoa comia até se sentir satisfeita. Era um milagre feito diante dos olhos de todos. Jesus agradeceu antes de comer, e nós também podemos agradecer a Deus por nossa comida.","O alimento se multiplicava nas mãos dos discípulos.",{z:"L",fl:1}],
+[3,"Quando todos terminaram de comer, Jesus pediu aos discípulos que recolhessem os pedaços que sobraram, para que nada se perdesse. Eles encheram doze cestos com as sobras dos cinco pães."],
+[3,"As pessoas ficaram admiradas e entenderam que Jesus era alguém muito especial. Aprendemos que Deus cuida de nós e que, quando compartilhamos o que temos, mesmo que seja pouco, ele pode multiplicar. Sempre sobra amor quando damos de coração.","Sobraram doze cestos!",{z:"W",sk:"u"}]
+],
+h33:[
+[0,"Depois do milagre dos pães, Jesus mandou os discípulos irem de barco para o outro lado do lago, enquanto ele despedia a multidão. Depois, subiu sozinho ao monte para orar. Já era noite."],
+[0,"No meio do lago, o barco foi sacudido pelas ondas, porque o vento era contrário. Os discípulos remavam com força, mas pouco avançavam. A noite era escura e fria, e eles estavam cansados e assustados.","O barco lutava contra o vento.",{z:"R",fl:1,sk:"n"}],
+[1,"Pela madrugada, entre três e seis da manhã, Jesus foi até eles, andando sobre o mar. Quando os discípulos o viram caminhando sobre a água, ficaram aterrorizados, achando que era um fantasma, e gritaram de medo."],
+[1,"Jesus logo falou com eles: tenham bom ânimo, sou eu! Não tenham medo. A voz dele os acalmou. Mesmo quando as coisas parecem assustadoras, Jesus fala conosco e nos diz para não temer.","Jesus chegou caminhando sobre as águas.",{z:"C",sk:"n",b:[["Sou eu! Não tenham medo.",8,8]]}],
+[2,"Pedro respondeu: Senhor, se és tu, manda-me ir ao teu encontro sobre as águas. Jesus disse: vem. Pedro desceu do barco e começou a andar sobre a água, indo na direção de Jesus."],
+[2,"Mas, quando Pedro percebeu o vento forte, teve medo e começou a afundar. Então gritou: Senhor, salva-me! Ele tirou os olhos de Jesus e olhou para as ondas. Foi então que aprendeu a olhar de novo para o Senhor.","Pedro afundou quando olhou para o vento.",{z:"L",fl:1,b:[["Senhor, me ajude!",50,8]]}],
+[3,"Imediatamente Jesus estendeu a mão e o segurou. Disse: homem de pouca fé, por que você duvidou? Quando os dois subiram no barco, o vento parou. Os discípulos o adoraram, dizendo: verdadeiramente tu és o Filho de Deus."],
+[3,"Jesus nunca solta a nossa mão. Quando sentimos medo, podemos pedir ajuda, e ele nos segura. Pedro, mesmo com medo, foi o único que saiu do barco para ir ao encontro de Jesus. Confiar em Deus pode nos levar mais longe do que imaginamos.","Jesus segurou Pedro pela mão.",{z:"W",fl:1,sk:"d"}]
+],
+h34:[
+[0,"Jesus voltou a Cafarnaum, e logo se espalhou a notícia de que ele estava em casa. Tanta gente foi vê-lo que a casa lotou, e não havia lugar nem na porta. Jesus ensinava a todos a palavra de Deus."],
+[0,"Ali perto, havia um homem paralítico, que não conseguia andar. Ele tinha quatro amigos muito dedicados, que queriam levá-lo a Jesus. Eles o carregaram numa maca até a casa, mas a multidão fechava todo o caminho.","Quatro amigos levaram o homem até a casa.",{z:"L",fl:1}],
+[1,"Eles não desistiram. Pensaram: já que não dá para passar pela porta, vamos pelo teto! Subiram ao telhado, levando o amigo na maca. Naquele tempo, as casas tinham tetos simples, que podiam ser abertos."],
+[1,"Os quatro amigos abriram um buraco no telhado, bem acima de onde Jesus estava. Dava para ouvir os pedaços caindo lá embaixo, e Jesus olhou para cima. Aqueles homens fariam qualquer coisa para levar o amigo a Jesus.","Eles abriram o telhado, para levar o amigo a Jesus.",{z:"R",b:[["Vamos pelo teto!",8,8]]}],
+[2,"Com cordas, desceram a maca até ficar bem diante de Jesus. Ele viu a fé daqueles amigos, e isso o tocou. Olhou para o paralítico e disse: filho, os teus pecados estão perdoados."],
+[2,"Alguns mestres da lei que estavam ali pensaram: quem pode perdoar pecados, a não ser Deus? Jesus sabia o que eles pensavam e perguntou: o que é mais fácil: dizer que os pecados estão perdoados ou mandar levantar e andar?","Jesus mostrou que tem poder para perdoar.",{z:"C",fl:1,b:[["Eles têm muita fé!",8,8]]}],
+[3,"Então Jesus disse ao homem: levante-se, pegue a sua maca e vá para casa. Na mesma hora, ele se levantou diante de todos, pegou a maca e saiu andando. Estava curado!"],
+[3,"Todos ficaram admirados e louvaram a Deus, dizendo: nunca vimos nada igual! O homem voltou para casa andando, com o coração cheio de alegria. Bons amigos levam os outros a Jesus, e a fé deles abre portas, ou tetos.","A fé dos amigos fez a diferença.",{z:"W",fl:1,b:[["Levante-se e vá para casa!",8,10]]}]
+],
+h35:[
+[0,"Jesus e os discípulos estavam viajando pela região de Samaria. Já era meio-dia, e Jesus, cansado da caminhada, sentou-se à beira de um poço, perto de uma cidade chamada Sicar, enquanto os discípulos foram comprar comida."],
+[0,"Foi então que uma mulher samaritana chegou para tirar água. Ela vinha sozinha, na hora mais quente do dia, quando ninguém mais costumava aparecer. Talvez tivesse vergonha de encontrar as outras mulheres.","Uma mulher chegou ao poço sozinha.",{z:"L",fl:1}],
+[1,"Jesus lhe disse: dê-me de beber. A mulher ficou muito surpresa, porque os judeus não costumavam falar com os samaritanos. Perguntou como ele, sendo judeu, pedia água a ela, que era samaritana."],
+[1,"Jesus respondeu com gentileza. Para ele, não havia barreira entre as pessoas. Ele queria conversar com aquela mulher, ouvi-la e conhecê-la, e não via preconceito algum nela. Jesus tem tempo para todos.","Jesus quebrou as barreiras e conversou com ela.",{z:"R",b:[["Dê-me de beber.",8,8]]}],
+[2,"Jesus continuou: se você soubesse quem está pedindo de beber, você é que pediria a mim, e eu lhe daria água viva. Quem beber da água que eu der nunca mais terá sede, e dentro dele brotará uma fonte para a vida eterna."],
+[2,"A mulher pediu essa água. Jesus também lhe mostrou que conhecia a sua vida, mas sem a condenar. Disse que Deus procura quem o adore em espírito e em verdade. Ela entendeu que estava diante do Messias que esperava.","Jesus ofereceu água que sacia a alma.",{z:"C",b:[["Quem beber desta água nunca terá sede.",4,8]]}],
+[3,"A mulher deixou o seu cântaro e correu até a cidade. Dizia a todos: venham ver um homem que me disse tudo o que fiz. Será que este não é o Cristo? Ela, que evitava as pessoas, agora corria para chamá-las."],
+[3,"Muitos samaritanos saíram da cidade e foram até Jesus. Pediram que ficasse com eles, e ele ficou dois dias. Muitos creram nele, primeiro por causa do testemunho da mulher e depois por terem ouvido o próprio Jesus. Quem encontra Jesus quer contar aos outros.","Ela contou a todos o que tinha encontrado.",{z:"W",fl:1,b:[["Venham ver!",8,10]]}]
+],
+h36:[
+[0,"Naquele tempo, as pessoas levavam seus filhos pequenos a Jesus, para que ele pusesse as mãos sobre eles e orasse por eles. As crianças gostavam de estar perto dele, pois Jesus era carinhoso com todos."],
+[0,"Mães e pais vinham de longe, trazendo bebês nos braços e segurando os pequenos pela mão. Havia crianças correndo e rindo, e as famílias queriam que seus filhos recebessem uma bênção de Jesus.","As crianças queriam estar perto de Jesus.",{z:"L",fl:1}],
+[1,"Mas os discípulos não gostaram. Eles achavam que Jesus estava ocupado demais com assuntos importantes e que as crianças atrapalhavam. Então começaram a repreender as pessoas que traziam os pequenos."],
+[1,"Os discípulos mandavam as crianças esperarem ou irem embora. Talvez pensassem que estavam ajudando Jesus a descansar, mas não entendiam o coração dele. Para Jesus, nenhuma criança é pequena demais para ser importante.","Os discípulos tentaram afastar as crianças.",{z:"R",b:[["Não incomodem o Mestre!",8,8]]}],
+[2,"Quando Jesus viu aquilo, ficou indignado, e disse aos discípulos: deixem que as crianças venham a mim e não as impeçam, porque o reino de Deus pertence aos que são como elas."],
+[2,"Jesus completou: eu lhes digo a verdade, quem não receber o reino de Deus como uma criança nunca entrará nele. Crianças confiam, aceitam o amor e não fingem. É assim que Deus quer que a gente o receba.","Jesus chamou as crianças para perto.",{z:"C",b:[["Deixem as crianças virem a mim!",8,8]]}],
+[3,"E Jesus tomou as crianças nos braços, colocou as mãos sobre elas e as abençoou. Cada uma sentiu o seu carinho, o seu cuidado e o seu amor. Foi um momento que elas nunca esqueceriam."],
+[3,"Isso mostra que você, criança, é muito amada por Jesus, e que ele sempre tem tempo para você. Pode falar com ele a qualquer hora, em oração. Também nós, adultos, podemos aprender com a fé simples e confiante dos pequenos.","Jesus abraçou e abençoou cada criança.",{z:"W",fl:1,sk:"u"}]
+],
+h37:[
+[0,"Jesus e seus discípulos estavam viajando, e, numa aldeia, uma mulher chamada Marta o recebeu em sua casa. Marta tinha uma irmã, Maria. Receber Jesus era uma grande alegria, e a casa se encheu de movimento."],
+[0,"Marta queria que tudo estivesse perfeito para o convidado tão especial. Pensava em refeição, mesa, louça e arrumação, e correu de um lado para o outro. Havia muito a fazer, e ela não tinha tempo para parar.","Marta queria servir bem a Jesus.",{z:"L",fl:1}],
+[1,"Enquanto isso, o tempo passava, e Marta ia ficando cansada e preocupada. Cada vez que ela olhava para a sala, via a irmã sentada, e começou a sentir irritação."],
+[1,"Marta já não aguentava mais e foi até Jesus. Ela disse: Senhor, não te importas que a minha irmã me deixe sozinha com todo o serviço? Manda que ela me ajude! Marta queria o bem, mas estava ansiosa e perdendo a paz.","Marta se cansou e reclamou.",{z:"R",b:[["Maria, venha me ajudar!",8,8]]}],
+[2,"Maria, por sua vez, tinha feito outra escolha. Ela se sentou aos pés de Jesus e ficou ouvindo o que ele dizia, sem pressa. Para ela, nada era mais importante do que estar perto dele naquele momento."],
+[2,"Nada de grandes tarefas ou de coisas para mostrar: Maria apenas escutava. Jesus gostava de ensinar, e ela estava com o coração aberto. Aquela hora de silêncio e atenção valia mais do que muitos afazeres.","Maria escolheu ouvir Jesus.",{z:"C",fl:1}],
+[3,"Jesus respondeu a Marta com muito carinho, chamando-a duas vezes pelo nome: Marta, Marta, você anda ansiosa e preocupada com muitas coisas. Mas apenas uma é necessária."],
+[3,"Maria escolheu a melhor parte, e ela não lhe será tirada. Jesus não disse que servir era errado, e sim que ouvi-lo vem primeiro. Podemos servir com alegria, quando antes paramos para estar com ele e ouvir a sua Palavra.","Primeiro ouvir, depois servir.",{z:"W",b:[["Maria escolheu a melhor parte.",8,8]]}]
+],
+h38:[
+[0,"Jesus contou uma história sobre um pai que tinha dois filhos. Um dia, o filho mais novo disse: pai, quero a minha parte da herança agora. Era um pedido duro, mas o pai, com o coração partido, dividiu os bens entre os filhos."],
+[0,"Poucos dias depois, o filho mais novo juntou tudo o que tinha e partiu para uma terra distante. Estava animado, achando que ia ser livre e feliz, longe das regras da casa. Não imaginava o que o esperava.","O filho queria viver do seu jeito, longe de casa.",{z:"L",fl:1}],
+[1,"Lá, ele gastou todo o dinheiro com festas e coisas sem valor, em pouco tempo. Quando tudo acabou, veio uma grande fome naquela terra, e ele começou a passar necessidade. Não tinha mais amigos nem dinheiro."],
+[1,"Arrumou emprego cuidando de porcos, que era um serviço que um judeu considerava muito humilhante. Ele tinha tanta fome que desejava comer a comida dos porcos, mas ninguém lhe dava nada.","Sozinho e com fome, ele chegou ao fundo do poço.",{z:"R",b:[["Estou com fome...",8,8]]}],
+[2,"Então o jovem caiu em si e se lembrou do pai: quantos empregados do meu pai têm comida de sobra, e eu aqui morrendo de fome! Resolveu voltar e pedir perdão, dizendo que não merecia mais ser filho."],
+[2,"Ele ensaiou o que ia dizer: pai, pequei contra o céu e contra você. Não mereço mais ser chamado de seu filho, trate-me como um dos seus empregados. Levantou-se e começou a viagem de volta.","Ele decidiu voltar para casa.",{z:"C",b:[["Vou voltar para casa.",8,8]]}],
+[3,"Quando ainda estava longe, o pai o viu, e sentiu compaixão. Saiu correndo, abraçou o filho e o beijou. O filho começou a dizer o seu discurso, mas o pai nem esperou ele terminar."],
+[3,"O pai mandou trazer a melhor roupa, um anel e sandálias. Mandou preparar uma grande festa, porque aquele filho estava perdido e foi encontrado. Assim é Deus: ele nos espera com os braços abertos, não importa o que tenhamos feito.","O pai fez festa pelo filho que voltou.",{z:"W",fl:1,b:[["Meu filho voltou!",8,10]]}]
+],
+h39:[
+[0,"Lázaro, Marta e Maria eram irmãos e grandes amigos de Jesus. Moravam em Betânia. Um dia, Lázaro ficou muito doente, e as irmãs mandaram avisar Jesus: Senhor, aquele a quem tu amas está doente."],
+[0,"Jesus disse que aquela doença não era para a morte, mas para a glória de Deus. Mesmo assim, ficou ainda dois dias onde estava. Enquanto isso, Lázaro morreu, e as irmãs ficaram tristes, sem entender por que Jesus não tinha vindo.","As irmãs esperaram por Jesus, mas Lázaro morreu.",{z:"L",fl:1}],
+[1,"Quando Jesus chegou a Betânia, Lázaro já estava no túmulo havia quatro dias. Marta correu ao seu encontro e disse: Senhor, se tivesses estado aqui, meu irmão não teria morrido. Mas ainda confio que Deus te dará o que pedires."],
+[1,"Jesus lhe disse: eu sou a ressurreição e a vida. Quem crê em mim, ainda que morra, viverá. Maria também veio, chorando, e todos que estavam com ela choravam. Ao ver aquilo, Jesus se comoveu e chorou.","Jesus chorou junto com os amigos.",{z:"R",fl:1,b:[["Onde o colocaram?",50,8]]}],
+[2,"Jesus foi até o túmulo, que era uma caverna fechada com uma pedra. Mandou que tirassem a pedra. Marta disse que já devia ter mau cheiro. Jesus respondeu: não lhe disse que, se você crer, verá a glória de Deus?"],
+[2,"Tiraram a pedra, e Jesus olhou para o céu e agradeceu ao Pai por ter ouvido a sua oração. Depois, com voz forte, clamou: Lázaro, venha para fora! Todos prenderam a respiração diante do túmulo aberto.","Jesus chamou Lázaro pelo nome.",{z:"C",b:[["Lázaro, vem para fora!",8,8]]}],
+[3,"E o morto saiu, com as mãos e os pés enfaixados e o rosto envolto num pano. Jesus disse: tirem as faixas e deixem que ele vá. Lázaro estava vivo! As irmãs o abraçaram, chorando de alegria."],
+[3,"Muitos que viram o milagre creram em Jesus. Ele mostrou que tem poder sobre a morte e que se importa com a nossa tristeza. Um dia, o próprio Jesus ressuscitaria, e todos os que creem nele terão vida eterna.","Jesus tem poder sobre a morte.",{z:"W",fl:1,sk:"d"}]
+],
+h40:[
+[0,"Depois que Jesus subiu ao céu, os discípulos ficaram em Jerusalém, como ele tinha pedido. Jesus tinha prometido que enviaria o Espírito Santo. Todos esperavam, orando juntos, cerca de cento e vinte pessoas."],
+[0,"No dia de Pentecostes, uma festa judaica que acontecia cinquenta dias depois da Páscoa, os seguidores de Jesus estavam todos reunidos no mesmo lugar. Havia expectativa no ar, e todos oravam com o mesmo coração.","Todos reunidos, esperando a promessa.",{z:"L",fl:1}],
+[1,"De repente, veio do céu um som como de um vento forte, que encheu a casa. Apareceram línguas como de fogo, que se separaram e pousaram sobre cada um deles. Todos ficaram cheios do Espírito Santo."],
+[1,"A promessa de Jesus se cumpriu: o Espírito Santo veio sobre eles. As pequenas chamas sobre cada cabeça mostravam que Deus estava com cada um, dando poder e coragem. Os discípulos já não estavam mais com medo.","O Espírito Santo veio sobre cada um.",{z:"C",sk:"n"}],
+[2,"Começaram a falar em outras línguas, como o Espírito os capacitava. Em Jerusalém havia gente de muitos países, que tinham vindo para a festa. Quando ouviram o barulho, juntaram-se, e cada um ouvia os discípulos falando na sua própria língua."],
+[2,"Estavam espantados: aqueles galileus falavam das maravilhas de Deus em cada uma das línguas! Pedro, então, se levantou e explicou a todos que Jesus de Nazaré era o Messias, que fora crucificado e ressuscitou.","Todos entendiam na sua própria língua.",{z:"R",fl:1,b:[["É na minha língua!",8,8]]}],
+[3,"Ouvindo isso, o coração das pessoas ficou tocado. Perguntaram: o que devemos fazer? Pedro respondeu: arrependam-se e sejam batizados em nome de Jesus Cristo, e receberão o dom do Espírito Santo."],
+[3,"Naquele dia, cerca de três mil pessoas creram e foram batizadas. Passaram a viver juntas, aprendendo, orando, partilhando o que tinham e louvando a Deus. Assim nasceu a igreja. Hoje também, o Espírito Santo ajuda quem segue Jesus.","Nasceu a igreja, com muita alegria.",{z:"W",fl:1,sk:"d"}]
+],
+h41:[
+[0,"Saulo era um homem muito instruído, mas estava contra os seguidores de Jesus. Ele os perseguia, prendia e queria que deixassem de falar de Cristo. Achava que estava fazendo o certo ao defender a sua religião."],
+[0,"Um dia, Saulo pediu cartas ao sumo sacerdote para ir até Damasco e prender os cristãos que estivessem lá. Ele saiu em viagem, determinado, com seus companheiros, a muitos dias de caminhada.","Saulo foi a Damasco para prender os cristãos.",{z:"L",fl:1}],
+[1,"Perto de Damasco, de repente, uma luz forte, mais brilhante que o sol, resplandeceu do céu em volta dele. Saulo caiu ao chão, e ouviu uma voz que perguntava: Saulo, Saulo, por que você me persegue?"],
+[1,"Saulo perguntou: quem és tu, Senhor? E a voz respondeu: eu sou Jesus, a quem você persegue. Levante-se e entre na cidade, e lá lhe dirão o que fazer. Saulo percebeu que estava enganado, e tremeu.","Jesus falou com Saulo, do céu.",{z:"C",b:[["Quem és tu, Senhor?",8,8]]}],
+[2,"Quando Saulo se levantou e abriu os olhos, não conseguia enxergar nada. Os companheiros o pegaram pela mão e o levaram a Damasco. Ficou três dias sem enxergar, sem comer nem beber, pensando em tudo o que tinha acontecido."],
+[2,"Durante esse tempo, Saulo orou. O homem que tinha vindo prender os cristãos agora estava indefeso e dependente da ajuda dos outros. Deus estava preparando o coração dele para uma nova vida e uma nova missão.","Saulo ficou sem enxergar, mas orou.",{z:"R",fl:1,sk:"u"}],
+[3,"Em Damasco, vivia um discípulo chamado Ananias. Deus lhe disse, numa visão: vá até a casa de Saulo, pois ele está orando. Ananias teve medo, porque Saulo era conhecido pelo mal que fazia, mas Deus disse que o tinha escolhido para uma grande missão."],
+[3,"Ananias obedeceu. Pôs as mãos sobre Saulo e disse: irmão Saulo, o Senhor Jesus me enviou para que você volte a ver e fique cheio do Espírito Santo. Logo Saulo voltou a enxergar, foi batizado e passou a falar de Jesus. Depois, ficou conhecido como Paulo.","Saulo virou Paulo, um servo de Jesus.",{z:"W",fl:1,sk:"d",b:[["Irmão Saulo, Jesus me enviou!",8,8]]}]
+]};/*__EXP_END__*/
+expandStories();
 STORIES.forEach(s=>{if(ORDER[s.id])s.o=ORDER[s.id];if(CHAP[s.id])s.ch=CHAP[s.id]});
 STORIES.sort((a,b)=>a.o-b.o);
 const isNT=s=>s.o>=4000;
@@ -719,7 +1137,23 @@ const isNT=s=>s.o>=4000;
 /* ---------- LEITOR DE QUADRINHOS (tela cheia) ---------- */
 let hView=null,hPage=0,hBusy=false,hF='all';
 const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
-const panelHTML=p=>`<figure class="pnl" style="--s0:${p.sky[0]};--s1:${p.sky[1]}"><div class="pin">${scene(p.sky,p.p,p.a)}${p.c?`<figcaption class="cap">${p.c}</figcaption>`:''}${p.b.map(b=>`<div class="bl" style="left:${b.x}%;top:${b.y}%">${b.t}</div>`).join('')}</div></figure>`;
+const ZOOM={W:'0 0 400 260',L:'0 91 260 169',R:'140 91 260 169',C:'70 91 260 169',T:'70 0 260 169',TL:'0 0 260 169',TR:'140 0 260 169',X:'110 120 180 117',XL:'20 120 180 117',XR:'200 120 180 117'};
+const panelHTML=p=>`<figure class="pnl" style="--s0:${p.sky[0]};--s1:${p.sky[1]}"><div class="pin">${scene(p.sky,p.p,p.a,p.z?ZOOM[p.z]:null,p.fl)}${p.c?`<figcaption class="cap">${p.c}</figcaption>`:''}${p.b.map(b=>`<div class="bl" style="left:${b.x}%;top:${b.y}%">${b.t}</div>`).join('')}</div></figure>`;
+const NARRACAO=false;if(NARRACAO)document.body.classList.add('narr-on'); /* true = mostra o parágrafo narrado sob cada quadrinho */
+const cellHTML=p=>NARRACAO?`<div class="cell">${panelHTML(p)}${p.tx?`<p class="narr">${p.tx}</p>`:''}</div>`:panelHTML(p);
+/* ---------- histórias ampliadas: 8 quadrinhos com texto narrado ---------- */
+function expandStories(){
+  STORIES.forEach(s=>{
+    const e=(window.EXP||{})[s.id];if(!e)return;
+    const o=s.pn;
+    s.pn=e.map(([i,tx,c,op])=>{
+      const b=o[i];
+      if(c===undefined)return {...b,tx};
+      const q=op||{};
+      return {sky:q.sk&&SKY[q.sk]?SKY[q.sk]:b.sky,p:b.p,a:b.a,c,b:(q.b||[]).map(([t,x,y])=>B(t,x,y)),z:q.z||null,fl:!!q.fl,tx};
+    });
+  });
+}
 function storyPages(s){const pg=[{k:'cover'}];for(let i=0;i<s.pn.length;i+=2)pg.push({k:'pn',a:s.pn.slice(i,i+2)});pg.push({k:'end'});return pg}
 function storyVerse(s){
   if(s.v)return s.v;
@@ -730,7 +1164,7 @@ function storyVerse(s){
 }
 function pageHTML(s,pg){
   if(pg.k==='cover')return `<div class="pgc cover"><div class="cvbox">${panelHTML({sky:s.pn[0].sky,p:s.pn[0].p,a:s.pn[0].a,b:[]})}</div><h2 class="cvt">${s.t}</h2><div class="cvr">${s.r}</div><p class="hint">Toque na lateral da tela, deslize ou use as setas para virar a página.</p></div>`;
-  if(pg.k==='pn')return `<div class="comic">${pg.a.map(panelHTML).join('')}</div>`;
+  if(pg.k==='pn')return `<div class="comic">${pg.a.map(cellHTML).join('')}</div>`;
   return `<div class="pgc end"><h2 class="cvt">Fim</h2>${vbox(storyVerse(s))}<div class="sub">Para conversar</div><p>${s.q}</p><div class="row">${s.ch&&BIB?`<button class="btn" data-ch="${s.ch[0]}|${s.ch[1]}">Ler o capítulo na Bíblia</button>`:''}${SQ[s.id]?`<button class="btn" data-quiz="${s.id}">Fazer o quiz</button>`:''}<button class="btn ghost" data-again>Ler de novo</button></div></div>`;
 }
 function renderHistorias(){
