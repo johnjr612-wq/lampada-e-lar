@@ -1754,7 +1754,7 @@ function openLegal(k){
   $('#lgx').onclick=close;d.addEventListener('click',e=>{if(e.target===d)close()});
   $('#lgx').focus();
 }
-const LGLINKS='<div class="lglinks"><button type="button" data-lg="priv">Política de Privacidade</button> · <button type="button" data-lg="term">Termos de Uso</button></div>';
+const LGLINKS='<div class="lglinks"><button type="button" data-lg="priv">Política de Privacidade</button> · <button type="button" data-lg="term">Termos de Uso</button><br><small style="opacity:.6">versão 9/11 · voz</small></div>';
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-lg]');if(b){e.preventDefault();openLegal(b.dataset.lg)}});
 function closePaywall(){const d=$('#pw');if(d)d.remove()}
 addEventListener('keydown',e=>{if(e.key==='Escape'){const g=$('#lg');if(g)g.remove();else closePaywall()}});
