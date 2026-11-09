@@ -280,6 +280,14 @@ body.narr-on .cell{display:flex;flex-direction:column;gap:7px}
 body.narr-on .cell .pnl{aspect-ratio:400/260;width:100%;min-height:0}
 body.narr-on .narr{margin:0;font:500 1.02rem/1.55 var(--body);color:inherit;padding:0 4px}
 @media (orientation:landscape) and (min-width:700px){body.narr-on .comic{display:grid!important;grid-template-columns:1fr 1fr;align-items:start;gap:16px}}
+/* um quadrinho por página: grande, centralizado, legenda embaixo */
+.comic.one{display:flex!important;flex-direction:column;justify-content:center;align-items:center;gap:14px;padding:12px;height:100%}
+.comic.one .cell{width:100%;display:flex;flex-direction:column;gap:14px}
+.comic.one .pnl{aspect-ratio:400/260;width:100%;flex:none;min-height:0;box-shadow:0 6px 18px rgba(40,25,5,.22)}
+.comic.one .cap{display:none}
+.comic.one .bl{font-size:1rem}
+.pcap{margin:0;text-align:center;font:700 1.2rem/1.35 'Comic Neue',var(--body);color:inherit;padding:0 8px}
+@media (orientation:landscape) and (min-width:700px){.comic.one .cell{width:min(100%,calc((100vh - 220px)*1.5385));margin:0 auto}}
 </style>
 </head>
 <body>
@@ -1140,7 +1148,7 @@ const reduceMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const ZOOM={W:'0 0 400 260',L:'0 91 260 169',R:'140 91 260 169',C:'70 91 260 169',T:'70 0 260 169',TL:'0 0 260 169',TR:'140 0 260 169',X:'110 120 180 117',XL:'20 120 180 117',XR:'200 120 180 117'};
 const panelHTML=p=>`<figure class="pnl" style="--s0:${p.sky[0]};--s1:${p.sky[1]}"><div class="pin">${scene(p.sky,p.p,p.a,p.z?ZOOM[p.z]:null,p.fl)}${p.c?`<figcaption class="cap">${p.c}</figcaption>`:''}${p.b.map(b=>`<div class="bl" style="left:${b.x}%;top:${b.y}%">${b.t}</div>`).join('')}</div></figure>`;
 const NARRACAO=false;if(NARRACAO)document.body.classList.add('narr-on'); /* true = mostra o parágrafo narrado sob cada quadrinho */
-const cellHTML=p=>NARRACAO?`<div class="cell">${panelHTML(p)}${p.tx?`<p class="narr">${p.tx}</p>`:''}</div>`:panelHTML(p);
+const cellHTML=p=>QPP===1&&!NARRACAO?`<div class="cell">${panelHTML(p)}${p.c?`<p class="pcap">${p.c}</p>`:''}</div>`:NARRACAO?`<div class="cell">${panelHTML(p)}${p.tx?`<p class="narr">${p.tx}</p>`:''}</div>`:panelHTML(p);
 /* ---------- histórias ampliadas: 8 quadrinhos com texto narrado ---------- */
 function expandStories(){
   STORIES.forEach(s=>{
@@ -1154,7 +1162,8 @@ function expandStories(){
     });
   });
 }
-function storyPages(s){const pg=[{k:'cover'}];for(let i=0;i<s.pn.length;i+=2)pg.push({k:'pn',a:s.pn.slice(i,i+2)});pg.push({k:'end'});return pg}
+const QPP=1; /* quadrinhos por página (1 ou 2) */
+function storyPages(s){const pg=[{k:'cover'}];for(let i=0;i<s.pn.length;i+=QPP)pg.push({k:'pn',a:s.pn.slice(i,i+QPP)});pg.push({k:'end'});return pg}
 function storyVerse(s){
   if(s.v)return s.v;
   const key='story_'+s.id;
@@ -1164,7 +1173,7 @@ function storyVerse(s){
 }
 function pageHTML(s,pg){
   if(pg.k==='cover')return `<div class="pgc cover"><div class="cvbox">${panelHTML({sky:s.pn[0].sky,p:s.pn[0].p,a:s.pn[0].a,b:[]})}</div><h2 class="cvt">${s.t}</h2><div class="cvr">${s.r}</div><p class="hint">Toque na lateral da tela, deslize ou use as setas para virar a página.</p></div>`;
-  if(pg.k==='pn')return `<div class="comic">${pg.a.map(cellHTML).join('')}</div>`;
+  if(pg.k==='pn')return `<div class="comic${QPP===1?' one':''}">${pg.a.map(cellHTML).join('')}</div>`;
   return `<div class="pgc end"><h2 class="cvt">Fim</h2>${vbox(storyVerse(s))}<div class="sub">Para conversar</div><p>${s.q}</p><div class="row">${s.ch&&BIB?`<button class="btn" data-ch="${s.ch[0]}|${s.ch[1]}">Ler o capítulo na Bíblia</button>`:''}${SQ[s.id]?`<button class="btn" data-quiz="${s.id}">Fazer o quiz</button>`:''}<button class="btn ghost" data-again>Ler de novo</button></div></div>`;
 }
 function renderHistorias(){
