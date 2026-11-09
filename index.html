@@ -286,6 +286,15 @@ body.narr-on .narr{margin:0;font:500 1.02rem/1.55 var(--body);color:inherit;padd
 .comic.one .cap{display:none}
 .comic.one .bl{font-size:1.02rem}
 .tcap{position:absolute;left:10px;right:10px;top:10px;background:#ffe27a;color:#26211a;border:2px solid #1a1410;border-radius:8px;padding:8px 12px;font:700 1.12rem/1.3 'Comic Neue',var(--body);text-align:center;z-index:2}
+/* Bíblia narrada */
+.vs.speaking{background:color-mix(in srgb,var(--sun) 42%,transparent)!important;box-shadow:0 0 0 2px var(--sun)}
+.ttsfab{position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:60;display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;border:0;background:var(--moss,#3f7355);color:#fff;font:700 .95rem var(--body);box-shadow:0 6px 18px rgba(30,20,5,.35)}
+.ttsbar{position:fixed;left:10px;right:10px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:61;background:var(--card,#fff);border:2px solid var(--moss,#3f7355);border-radius:18px;padding:8px 10px;box-shadow:0 8px 24px rgba(30,20,5,.35);display:flex;flex-direction:column;gap:6px}
+.ttsbar .tr{display:flex;align-items:center;gap:6px;justify-content:space-between}
+.ttsbar .tl{font:700 .88rem var(--body);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ttsbar button svg{display:block;margin:auto}.ttsbar button,.ttsbar select{border:0;border-radius:12px;background:var(--soft,#eee);color:inherit;font:700 1rem var(--body);padding:9px 12px;min-width:44px}
+.ttsbar button.pl{background:var(--moss,#3f7355);color:#fff;min-width:56px}
+.ttsbar select{max-width:48%}
 </style>
 </head>
 <body>
@@ -1765,6 +1774,107 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{location.has
 addEventListener('hashchange',()=>show(location.hash.slice(1)));
 loadBible().then(()=>{recheckSub();renderVotd();show(location.hash.slice(1)||'inicio')});
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+
+/* ---------- Bíblia narrada (voz do aparelho) ---------- */
+const ICP={"play": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M7 4.5v15l13-7.5z\"/></svg>", "pause": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"currentColor\" aria-hidden=\"true\"><rect x=\"6\" y=\"4.5\" width=\"4.2\" height=\"15\" rx=\"1\"/><rect x=\"13.8\" y=\"4.5\" width=\"4.2\" height=\"15\" rx=\"1\"/></svg>", "prev": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"currentColor\" aria-hidden=\"true\"><rect x=\"5\" y=\"5\" width=\"2.6\" height=\"14\" rx=\"1\"/><path d=\"M19 5v14L9 12z\"/></svg>", "next": "<svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"currentColor\" aria-hidden=\"true\"><rect x=\"16.4\" y=\"5\" width=\"2.6\" height=\"14\" rx=\"1\"/><path d=\"M5 5v14l10-7z\"/></svg>", "x": "<svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M6 6l12 12M18 6L6 18\"/></svg>"};
+const TTS={on:false,play:false,b:0,c:0,i:-1,rate:+(store.get('ttsr',1)),voice:store.get('ttsv',''),gen:0};
+const hasTTS='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
+function ttsVoices(){try{return speechSynthesis.getVoices().filter(v=>/^pt/i.test(v.lang))}catch(_){return []}}
+const ttsScore=v=>{const n=v.name,br=/pt[-_]BR/i.test(v.lang)?100:0;let x=br;
+  if(/natural|neural|online/i.test(n))x+=60;else if(/premium|enhanced|aprimorad|siri/i.test(n))x+=50;else if(/google/i.test(n))x+=40;
+  if(/francisca|thalita|antonio|luciana|felipe|camila|vitoria|ricardo|isadora|fernanda/i.test(n))x+=15;
+  if(/compact|espeak/i.test(n))x-=40;return x};
+function ttsSorted(){return ttsVoices().sort((a,b)=>ttsScore(b)-ttsScore(a))}
+function ttsPick(){const vs=ttsSorted();if(!vs.length)return null;return vs.find(v=>v.name===TTS.voice)||vs[0]}
+const ttsGood=v=>!!v&&/natural|neural|online|premium|enhanced|aprimorad|google/i.test(v.name);
+function ttsClean(t){return String(t).replace(/\([^)]{0,20}\)/g,'').replace(/\s+([,.;:!?])/g,'$1').replace(/\s{2,}/g,' ').trim()}
+function ttsChunks(t){t=ttsClean(t);const out=[];let cur='';
+  (t.match(/[^.;:!?]+[.;:!?]*\s*/g)||[t]).map(x=>x.trim()).filter(Boolean).forEach(p=>{if((cur+' '+p).trim().length>140&&cur){out.push(cur);cur=p}else cur=(cur+' '+p).trim()});
+  if(cur)out.push(cur);return out.length?out:[t]}
+function ttsMark(){document.querySelectorAll('.vs.speaking').forEach(e=>e.classList.remove('speaking'));
+  if(!TTS.on||TTS.i<0)return;const e=document.getElementById('v'+TTS.b+'_'+TTS.c+'_'+TTS.i);
+  if(e){e.classList.add('speaking');try{e.scrollIntoView({block:'center',behavior:'smooth'})}catch(_){}}}
+function ttsLabel(){const l=document.getElementById('ttsl');if(l)l.textContent=BIB[TTS.b][0]+' '+(TTS.c+1)+(TTS.i>=0?' · versículo '+(TTS.i+1):'');
+  const pl=document.getElementById('ttsp');if(pl){pl.innerHTML=TTS.play?ICP.pause:ICP.play;pl.setAttribute('aria-label',TTS.play?'Pausar':'Ouvir')}}
+function ttsSay(){
+  if(!hasTTS||!TTS.on||!TTS.play)return;
+  const g=++TTS.gen;speechSynthesis.cancel();
+  const ch=BIB[TTS.b][1][TTS.c];
+  const txt=TTS.i<0?BIB[TTS.b][0]+', capítulo '+(TTS.c+1)+'.':ch[TTS.i];
+  const parts=ttsChunks(txt),v=ttsPick();
+  ttsMark();ttsLabel();
+  const run=k=>{
+    if(g!==TTS.gen||!TTS.play)return;
+    if(k>=parts.length){setTimeout(()=>{if(g===TTS.gen&&TTS.play)ttsNext()},TTS.i<0?450:280);return}
+    const u=new SpeechSynthesisUtterance(parts[k]);
+    if(v){u.voice=v;u.lang=v.lang}else u.lang='pt-BR';
+    u.rate=TTS.rate*0.96;u.pitch=1;
+    u.onend=()=>setTimeout(()=>run(k+1),k<parts.length-1?120:0);
+    u.onerror=e=>{if(g!==TTS.gen)return;if(e&&(e.error==='interrupted'||e.error==='canceled'))return;TTS.play=false;ttsLabel()};
+    speechSynthesis.speak(u);
+  };
+  run(0);
+}
+function ttsNext(){
+  const ch=BIB[TTS.b][1][TTS.c];
+  if(TTS.i+1<ch.length){TTS.i++;ttsSay();return}
+  let b=TTS.b,c=TTS.c+1;
+  if(c>=BIB[b][1].length){b++;c=0}
+  if(b>=BIB.length){ttsStop();return}
+  TTS.b=b;TTS.c=c;TTS.i=-1;
+  L={...L,v:'read',b,c,vs:null};renderBiblia();
+  setTimeout(ttsSay,250);
+}
+function ttsPrev(){if(TTS.i>0)TTS.i--;else TTS.i=-1;ttsSay()}
+function ttsStop(){TTS.on=false;TTS.play=false;TTS.gen++;try{speechSynthesis.cancel()}catch(_){}
+  const b=document.getElementById('ttsbar');if(b)b.remove();ttsMark();ttsSync()}
+
+function ttsHelp(){
+  const old=document.getElementById('lg');if(old)old.remove();
+  const d=document.createElement('div');d.className='pw';d.id='lg';d.style.zIndex=120;d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');
+  d.innerHTML=`<div class="pwbox"><button class="pwx" id="lgx" aria-label="Fechar">×</button><h2>Deixar a voz mais natural</h2><div class="legal">
+<p>A voz vem do seu aparelho, então dá para melhorar instalando uma voz melhor em português:</p>
+<h3>Android</h3><p>Configurações &gt; Sistema &gt; Idiomas &gt; Saída de texto para voz (ou Acessibilidade &gt; Texto para voz). Escolha o <b>Serviço de voz do Google</b>, toque na engrenagem e em <b>Instalar dados de voz</b>, e baixe <b>Português (Brasil)</b>. Use o Chrome para abrir o app.</p>
+<h3>iPhone</h3><p>Ajustes &gt; Acessibilidade &gt; Conteúdo Falado &gt; Vozes &gt; Português (Brasil). Baixe uma voz marcada como <b>Aprimorada</b> ou <b>Premium</b>, como Luciana ou Felipe.</p>
+<h3>Windows (Edge)</h3><p>Abra o app no <b>Microsoft Edge</b>. Ele traz vozes naturais, como <b>Francisca Online (Natural)</b> e <b>Antonio Online (Natural)</b>, que são bem melhores.</p>
+<h3>No player</h3><p>Se aparecer o seletor de voz ao lado da velocidade, experimente cada uma e fique com a que soar melhor. O app lembra a sua escolha.</p></div></div>`;
+  document.body.appendChild(d);const c=()=>d.remove();document.getElementById('lgx').onclick=c;d.addEventListener('click',e=>{if(e.target===d)c()});
+}
+function ttsBar(){
+  let bar=document.getElementById('ttsbar');if(bar)return;
+  bar=document.createElement('div');bar.className='ttsbar';bar.id='ttsbar';bar.setAttribute('role','region');bar.setAttribute('aria-label','Player da Bíblia narrada');
+  const vs=ttsSorted();
+  bar.innerHTML=`<div class="tr"><div class="tl" id="ttsl"></div><button id="ttsx" aria-label="Fechar player">${ICP.x}</button></div>
+  <div class="tr"><button id="ttsb" aria-label="Versículo anterior">${ICP.prev}</button><button id="ttsp" class="pl" aria-label="Pausar">${ICP.pause}</button><button id="ttsf" aria-label="Próximo versículo">${ICP.next}</button><button id="ttsr" aria-label="Velocidade">${TTS.rate}x</button>${vs.length>1?`<select id="ttsv" aria-label="Voz">${vs.map(v=>`<option value="${esc(v.name)}"${ttsPick()&&ttsPick().name===v.name?' selected':''}>${esc(v.name.replace(/Microsoft |Google /,'').slice(0,26))}</option>`).join('')}</select>`:''}</div>${ttsGood(ttsPick())?'':`<button id="ttsh" style="font-size:.82rem;padding:7px 10px">A voz está robótica? Veja como melhorar</button>`}`;
+  document.body.appendChild(bar);
+  const hb=document.getElementById('ttsh');if(hb)hb.onclick=ttsHelp;
+  const RATES=[0.8,1,1.2,1.5];
+  document.getElementById('ttsx').onclick=ttsStop;
+  document.getElementById('ttsp').onclick=()=>{if(TTS.play){TTS.play=false;TTS.gen++;speechSynthesis.cancel();ttsLabel()}else{TTS.play=true;ttsSay()}};
+  document.getElementById('ttsf').onclick=()=>{TTS.play=true;ttsNext()};
+  document.getElementById('ttsb').onclick=()=>{TTS.play=true;ttsPrev()};
+  document.getElementById('ttsr').onclick=e=>{const k=(RATES.indexOf(TTS.rate)+1)%RATES.length;TTS.rate=RATES[k];store.set('ttsr',TTS.rate);e.currentTarget.textContent=TTS.rate+'x';if(TTS.play)ttsSay()};
+  const sv=document.getElementById('ttsv');if(sv)sv.onchange=()=>{TTS.voice=sv.value;store.set('ttsv',TTS.voice);if(TTS.play)ttsSay()};
+}
+function ttsStart(){
+  const pos=store.get('pos',null)||{b:L.b||0,c:L.c||0};
+  TTS.b=L.v==='read'?L.b:pos.b;TTS.c=L.v==='read'?L.c:pos.c;TTS.i=-1;TTS.on=true;TTS.play=true;
+  ttsBar();ttsSay();ttsSync();
+}
+function ttsSync(){
+  let f=document.getElementById('ttsfab');
+  const inRead=hasTTS&&BIB&&!$('#p-biblia').hidden&&L.v==='read';
+  if(!inRead){if(f)f.remove();return}
+  if(TTS.on){if(f)f.remove();ttsMark();return}
+  if(!f){f=document.createElement('button');f.id='ttsfab';f.className='ttsfab';f.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5" fill="currentColor"/><rect x="17" y="14" width="4" height="6" rx="1.5" fill="currentColor"/></svg>Ouvir';f.setAttribute('aria-label','Ouvir este capítulo');f.onclick=ttsStart;document.body.appendChild(f)}
+}
+(function(){
+  if(!hasTTS)return;
+  const rb=renderBiblia;renderBiblia=function(){const r=rb.apply(this,arguments);ttsSync();ttsMark();return r};
+  const sh=show;show=function(n){if(n!=='biblia'&&TTS.on)ttsStop();const r=sh.apply(this,arguments);ttsSync();return r};
+  try{speechSynthesis.onvoiceschanged=()=>{const b=document.getElementById('ttsbar');if(b&&!b.querySelector('select')){b.remove();ttsBar();ttsLabel()}}}catch(_){}
+  addEventListener('pagehide',()=>{try{speechSynthesis.cancel()}catch(_){}});
+})();
 </script>
 </body>
 </html>
