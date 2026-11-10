@@ -302,6 +302,10 @@ body.narr-on .narr{margin:0;font:500 1.02rem/1.55 var(--body);color:inherit;padd
 .rsub button.on{background:#ffe066;border-color:#d9b92a;color:#26352e}
 .rsub button{padding:6px 8px;font-size:.8rem;gap:4px}.rsub b{padding:0 6px}
 mark.mk{background:color-mix(in srgb,#ffe066 78%,transparent);color:#26352e;border-radius:3px;padding:1px 0;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.sfil{display:flex;gap:6px;margin:2px 0 4px;flex-wrap:wrap}.sfil .chip.on{background:var(--moss);color:var(--on-moss);border-color:var(--moss)}
+mark.sh{background:color-mix(in srgb,var(--sun) 45%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+.gor{border-color:var(--moss)}
+.tsec{display:flex;align-items:center;gap:8px;color:var(--moss);font-size:.9rem;margin-top:22px}.tsec b{background:var(--soft);color:var(--ink);border-radius:99px;padding:0 8px}
 .bq{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .bqb{padding:12px 14px;gap:10px}.bqb .ic{font-size:1.5rem;color:var(--sun);line-height:1}
 .bqb .t{font-family:var(--display);font-size:1rem}.bqb .r{font-size:.82rem;color:var(--muted)}
@@ -1431,6 +1435,103 @@ document.addEventListener('selectionchange',()=>{
 const fdate=d=>new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
 const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
 function buildIdx(){if(NIDX)return;NIDX=[];BIB.forEach((bk,bi)=>bk[1].forEach((ch,ci)=>ch.forEach((t,vi)=>NIDX.push([bi,ci,vi,norm(t)]))))}
+/* ---------- busca ---------- */
+const ABR={gn:'Gênesis',ex:'Êxodo',lv:'Levítico',nm:'Números',dt:'Deuteronômio',js:'Josué',jz:'Juízes',rt:'Rute','1sm':'1 Samuel','2sm':'2 Samuel','1rs':'1 Reis','2rs':'2 Reis','1cr':'1 Crônicas','2cr':'2 Crônicas',ed:'Esdras',ne:'Neemias',et:'Ester',sl:'Salmos',pv:'Provérbios',ec:'Eclesiastes',ct:'Cantares',is:'Isaías',jr:'Jeremias',lm:'Lamentações',ez:'Ezequiel',dn:'Daniel',os:'Oséias',jl:'Joel',am:'Amós',ob:'Obadias',jn:'Jonas',mq:'Miquéias',na:'Naum',hc:'Habacuque',sf:'Sofonias',ag:'Ageu',zc:'Zacarias',ml:'Malaquias',mt:'Mateus',mc:'Marcos',lc:'Lucas',jo:'João',at:'Atos',rm:'Romanos','1co':'1 Coríntios','2co':'2 Coríntios',gl:'Gálatas',ef:'Efésios',fp:'Filipenses',cl:'Colossenses','1ts':'1 Tessalonicenses','2ts':'2 Tessalonicenses','1tm':'1 Timóteo','2tm':'2 Timóteo',tt:'Tito',fm:'Filemom',hb:'Hebreus',tg:'Tiago','1pe':'1 Pedro','2pe':'2 Pedro','1jo':'1 João','2jo':'2 João','3jo':'3 João',jd:'Judas',ap:'Apocalipse'};
+const nsp=s=>norm(s).replace(/[\s.]+/g,'');
+let sfilt='all';
+function findBooks(q){
+  const k=nsp(q);if(!k)return [];const out=[];
+  const add=i=>{if(i>=0&&!out.includes(i))out.push(i)};
+  if(ABR[k])add(BIB.findIndex(b=>b[0]===ABR[k]));
+  BIB.forEach((b,i)=>{if(nsp(b[0])===k)add(i)});
+  if(k.length>=2)BIB.forEach((b,i)=>{if(nsp(b[0]).startsWith(k))add(i)});
+  return out.slice(0,4);
+}
+function parseRef(q){
+  const m=norm(q.trim()).match(/^((?:[123]\s*)?[a-z]+)\.?\s*(?:(\d{1,3})(?:\s*[:.,v]\s*(?:ver[a-z]*\s*)?(\d{1,3})(?:\s*[-–]\s*(\d{1,3}))?)?)?$/);
+  if(!m)return null;
+  const bs=findBooks(m[1]);if(!bs.length)return null;
+  return {bs,c:m[2]?+m[2]:null,v:m[3]?+m[3]:null,v2:m[4]?+m[4]:null};
+}
+const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function parseQ(q){
+  const phrase=[];let rest=q.replace(/"([^"]+)"|“([^”]+)”/g,(_,a,b)=>{phrase.push(norm(a||b).trim());return ' '});
+  let words=norm(rest).split(/\s+/).filter(Boolean);
+  const key=words.filter(w=>!STOP.has(w));const all=words;if(key.length&&!phrase.length)words=key;
+  return {phrase:phrase.filter(Boolean),words,all};
+}
+const tail=t=>t.length<=3?'(?![a-z0-9])':'';
+const STOP=new Set('a o as os um uma de do da dos das em no na nos nas e ou que se por para com ao aos ate'.split(' '));
+const wordRe=t=>new RegExp('(^|[^a-z0-9])'+reEsc(t)+tail(t));
+function hiliteTxt(orig,terms){
+  const nt=Array.from(orig).map(ch=>ch.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()).join('');
+  if(nt.length!==orig.length||!terms.length)return esc(orig);
+  const mask=new Array(orig.length).fill(0);
+  terms.forEach(t=>{const re=new RegExp('(^|[^a-z0-9])('+reEsc(t)+tail(t)+')','g');let m;while((m=re.exec(nt))){const st=m.index+m[1].length;const len=t.length;for(let i=st;i<st+len;i++)mask[i]=1;if(m[0].length===0)re.lastIndex++}});
+  let out='',on=false;for(let i=0;i<orig.length;i++){if(mask[i]&&!on){out+='<mark class="sh">';on=true}else if(!mask[i]&&on){out+='</mark>';on=false}out+=esc(orig[i])}
+  return out+(on?'</mark>':'');
+}
+function runSearch(q,lim){
+  buildIdx();const {phrase,words,all}=parseQ(q);
+  const pre=words.map(wordRe),phr=phrase.map(wordRe);
+    const fre=all.length>1&&!phrase.length?wordRe(all.join(' ')):null;
+  const hits=[];
+  for(const r of NIDX){
+    if(sfilt==='at'&&r[0]>=39)continue;if(sfilt==='nt'&&r[0]<39)continue;
+    const t=r[3];let ok=true;
+    for(const x of phr)if(!x.test(t)){ok=false;break}
+    if(!ok)continue;
+    for(const x of pre)if(!x.test(t)){ok=false;break}
+    if(!ok)continue;
+    hits.push([fre&&fre.test(t)?0:1,r]);
+  }
+  hits.sort((a,b)=>a[0]-b[0]||0);
+  return {hits:hits.map(h=>h[1]),terms:[...words,...phrase.flatMap(x=>x.split(' '))].filter(Boolean)};
+}
+let slim=40,slims={at:20,nt:20};
+function updateResults(){
+  const box=document.getElementById('res'),lists=document.getElementById('tlists');if(!box)return;
+  const q=L.q.trim();
+  if(q.length<2){box.innerHTML='';if(lists)lists.hidden=false;const f=document.getElementById('sfil');if(f)f.hidden=true;return}
+  if(lists)lists.hidden=true;const f=document.getElementById('sfil');if(f)f.hidden=false;
+  let h='';
+  const ref=parseRef(q);
+  if(ref){
+    h+='<div class="sub">Ir direto para</div><div class="grid">'+ref.bs.map(bi=>{
+      const bk=BIB[bi];let ok=true,lab=bk[0],go=`${bi}:-1:-1`,tx='';
+      if(ref.c){const ch=bk[1][ref.c-1];if(!ch)ok=false;else{lab+=' '+ref.c;go=`${bi}:${ref.c-1}:-1`;
+        if(ref.v){if(!ch[ref.v-1])ok=false;else{lab+=':'+ref.v;go=`${bi}:${ref.c-1}:${ref.v-1}`;
+          if(ref.v2&&ref.v2>ref.v&&ch[ref.v2-1]){lab+='-'+ref.v2;go+=':'+(ref.v2-1)}
+          tx=ch.slice(ref.v-1,(ref.v2&&ref.v2>ref.v&&ch[ref.v2-1]?ref.v2:ref.v)).join(' ')}}}}
+      if(!ok)return '';
+      return `<button class="item res gor" data-gor="${go}"><div><div class="r">📖 ${esc(lab)}</div>${tx?`<div>${esc(tx.length>220?tx.slice(0,220)+'…':tx)}</div>`:`<div class="npv">${ref.c?'Abrir capítulo':'Abrir livro'}</div>`}</div></button>`}).join('')+'</div>';
+  }
+  const nq=norm(q.replace(/"|“|”/g,' ')).split(/\s+/).filter(Boolean);
+  const nm=bnotes.filter(n=>{const t=norm((n.t||'')+' '+(n.x||''));return nq.every(w=>t.includes(w))}).slice(0,4);
+  if(nm.length)h+='<div class="sub">Nas suas notas</div><div class="grid">'+nm.map(n=>`<button class="item res" data-nn="${n.id}"><div><div class="r">✎ ${esc((n.t||'Sem título').slice(0,60))}</div><div class="npv">${esc((n.x||'').slice(0,120))}</div></div></button>`).join('')+'</div>';
+  const {hits,terms}=runSearch(q);
+  const card=r=>`<button class="item res" data-go="${r[0]}:${r[1]}:${r[2]}"><div><div class="r">${BIB[r[0]][0]} ${r[1]+1}:${r[2]+1}</div><div>${hiliteTxt(BIB[r[0]][1][r[1]][r[2]],terms)}</div></div></button>`;
+  if(!hits.length)h+=`<div class="sub">0 resultados</div><p class="lead">Nada encontrado${sfilt!=='all'?' neste testamento':''}. Tente outra palavra, menos termos ou uma referência como “João 3:16”.</p>`;
+  else if(sfilt==='all'){
+    const at=hits.filter(r=>r[0]<39),nt=hits.filter(r=>r[0]>=39);
+    h+=`<div class="sub">${hits.length} resultado${hits.length===1?'':'s'} · ${at.length} no Velho Testamento · ${nt.length} no Novo</div>`;
+    [['at','Velho Testamento',at],['nt','Novo Testamento',nt]].forEach(([k,lab,arr])=>{
+      h+=`<div class="sub tsec">${lab} <b>${arr.length}</b></div>`;
+      if(!arr.length)h+='<p class="lead" style="margin:0 0 6px">Nenhum resultado aqui.</p>';
+      else{h+='<div class="grid">'+arr.slice(0,slims[k]).map(card).join('')+'</div>';
+        if(arr.length>slims[k])h+=`<button class="btn ghost smore" data-k="${k}" style="width:100%;margin-top:10px">Mostrar mais (${arr.length-slims[k]})</button>`}
+    });
+  }else{
+    h+=`<div class="sub">${hits.length} resultado${hits.length===1?'':'s'} no ${sfilt==='at'?'Velho':'Novo'} Testamento${hits.length>slim?` (mostrando ${slim})`:''}</div><div class="grid">${hits.slice(0,slim).map(card).join('')}</div>`;
+    if(hits.length>slim)h+='<button class="btn ghost smore" data-k="one" style="width:100%;margin-top:10px">Mostrar mais</button>';
+  }
+  box.innerHTML=h;
+  box.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const [bi,ci,vi]=b.dataset.go.split(':').map(Number);L={v:'read',b:bi,c:ci,vs:vi<0?null:vi,q:L.q,t:L.t};renderBiblia()});
+  box.querySelectorAll('[data-gor]').forEach(b=>b.onclick=()=>{const [bi,ci,vi,ve]=b.dataset.gor.split(':').map(Number);
+    if(ci<0){L={v:'chap',b:bi,c:0,vs:null,q:L.q,t:L.t};renderBiblia();scrollTo(0,0)}else{L={v:'read',b:bi,c:ci,vs:vi<0?null:vi,ve:isNaN(ve)?null:ve,q:L.q,t:L.t};renderBiblia()}});
+  box.querySelectorAll('[data-nn]').forEach(b=>b.onclick=()=>{L={...L,v:'note',nid:b.dataset.nn,ret:null};renderBiblia();scrollTo(0,0)});
+  box.querySelectorAll('.smore').forEach(b=>b.onclick=()=>{if(b.dataset.k==='one')slim+=60;else slims[b.dataset.k]+=40;updateResults()});
+}
 function renderBiblia(){
   const el=$('#p-biblia');
   document.body.classList.remove('reading');
@@ -1438,21 +1539,19 @@ function renderBiblia(){
   if(L.v==='books'){
     const last=store.get('pos',null);
     const chip=i=>`<button class="chip bkc" data-b="${i}">${BIB[i][0]}</button>`;
-    let res='';
-    if(L.q.trim().length>=3){
-      buildIdx();const terms=norm(L.q).split(/\s+/).filter(Boolean);
-      const hits=NIDX.filter(r=>terms.every(t=>r[3].includes(t)));
-      res=`<div class="sub">${hits.length} resultado${hits.length===1?'':'s'}${hits.length>60?' (mostrando 60)':''}</div><div class="grid">${hits.slice(0,60).map(r=>`<button class="item res" data-go="${r[0]}:${r[1]}:${r[2]}"><div><div class="r">${BIB[r[0]][0]} ${r[1]+1}.${r[2]+1}</div><div>${esc(BIB[r[0]][1][r[1]][r[2]])}</div></div></button>`).join('')}</div>`;
-    }
     el.innerHTML=`<h2 class="sec">Bíblia</h2><p class="lead">Os 66 livros completos, na versão Almeida Corrigida Fiel. Toque num versículo para salvá-lo nos Favoritos. Para guardar só um trecho, segure o dedo no texto e arraste.</p>
     <div class="bq"><button class="item bqb" id="gfav"><span class="ic" aria-hidden="true">★</span><div><div class="t">Favoritos</div><div class="r">${favCount()} ite${favCount()===1?'m':'ns'}</div></div></button><button class="item bqb" id="gnot"><span class="ic" aria-hidden="true">✎</span><div><div class="t">Bloco de notas</div><div class="r">${bnotes.length} nota${bnotes.length===1?'':'s'}</div></div></button></div>
     ${last?`<button class="item" data-go="${last.b}:${last.c}:-1" style="margin-bottom:14px"><div><div class="r">Continuar lendo</div><div class="t">${BIB[last.b][0]} ${last.c+1}</div></div></button>`:''}
-    <form id="sf" class="sform"><input class="search" id="q" type="search" placeholder="Buscar palavra ou expressão" value="${esc(L.q)}" aria-label="Buscar na Bíblia"><button class="btn" type="submit">Buscar</button></form>
-    ${res}
-    ${L.q.trim().length>=3?'':[['AT','Velho Testamento',0,39],['NT','Novo Testamento',39,66]].map(([k,l,a,z])=>`<button class="tst" data-t="${k}" aria-expanded="${L.t===k}"><span>${l}</span><small>${z-a} livros</small><span class="chev" aria-hidden="true">▾</span></button><div class="chips tbooks" ${L.t===k?'':'hidden'}>${BIB.slice(a,z).map((_,i)=>chip(a+i)).join('')}</div>`).join('')}`;
+    <form id="sf" class="sform"><input class="search" id="q" type="search" enterkeyhint="search" autocomplete="off" placeholder="Palavra, frase ou João 3:16" value="${esc(L.q)}" aria-label="Buscar na Bíblia"><button class="btn" type="submit">Buscar</button></form>
+    <div class="sfil" id="sfil" role="group" aria-label="Filtrar busca" hidden>${[['all','Os dois testamentos'],['at','Só Velho'],['nt','Só Novo']].map(([k,l])=>`<button type="button" class="chip${sfilt===k?' on':''}" data-f="${k}">${l}</button>`).join('')}</div>
+    <div id="res"></div>
+    <div id="tlists">${[['AT','Velho Testamento',0,39],['NT','Novo Testamento',39,66]].map(([k,l,a,z])=>`<button class="tst" data-t="${k}" aria-expanded="${L.t===k}"><span>${l}</span><small>${z-a} livros</small><span class="chev" aria-hidden="true">▾</span></button><div class="chips tbooks" ${L.t===k?'':'hidden'}>${BIB.slice(a,z).map((_,i)=>chip(a+i)).join('')}</div>`).join('')}</div>`;
     $('#gfav').onclick=()=>{L={...L,v:'favs',ret:null};renderBiblia();scrollTo(0,0)};
     $('#gnot').onclick=()=>{L={...L,v:'notes',ret:null};renderBiblia();scrollTo(0,0)};
-    $('#sf').onsubmit=e=>{e.preventDefault();L.q=$('#q').value;renderBiblia()};
+    $('#sf').onsubmit=e=>{e.preventDefault();L.q=$('#q').value;slim=40;slims={at:20,nt:20};updateResults();$('#q').blur()};
+    let qt;$('#q').oninput=()=>{clearTimeout(qt);qt=setTimeout(()=>{L.q=$('#q').value;slim=40;slims={at:20,nt:20};updateResults()},260)};
+    el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{sfilt=b.dataset.f;slim=40;slims={at:20,nt:20};el.querySelectorAll('[data-f]').forEach(x=>x.classList.toggle('on',x===b));updateResults()});
+    updateResults();
     el.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{L.t=L.t===b.dataset.t?null:b.dataset.t;renderBiblia()});
     el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{L={v:'chap',b:+b.dataset.b,c:0,vs:null,q:L.q,t:L.t};renderBiblia();scrollTo(0,0)});
     el.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const [bi,ci,vi]=b.dataset.go.split(':').map(Number);L={v:'read',b:bi,c:ci,vs:vi<0?null:vi,q:L.q,t:L.t};renderBiblia()});
@@ -1911,7 +2010,7 @@ function openLegal(k){
   $('#lgx').onclick=close;d.addEventListener('click',e=>{if(e.target===d)close()});
   $('#lgx').focus();
 }
-const LGLINKS='<div class="lglinks"><button type="button" data-lg="priv">Política de Privacidade</button> · <button type="button" data-lg="term">Termos de Uso</button><br><small style="opacity:.6">versão 9/11 · marcador</small></div>';
+const LGLINKS='<div class="lglinks"><button type="button" data-lg="priv">Política de Privacidade</button> · <button type="button" data-lg="term">Termos de Uso</button><br><small style="opacity:.6">versão 10/11 · testamentos</small></div>';
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-lg]');if(b){e.preventDefault();openLegal(b.dataset.lg)}});
 function closePaywall(){const d=$('#pw');if(d)d.remove()}
 addEventListener('keydown',e=>{if(e.key==='Escape'){const g=$('#lg');if(g)g.remove();else closePaywall()}});
